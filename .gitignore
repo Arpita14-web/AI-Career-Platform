@@ -1,0 +1,27 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Node dependencies
+node_modules/
+
+# Editor history
+.history/
+
+# Log files
+*.log
+npm-debug.log*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Resume uploads and personal data
+backend/uploads/resumes/*
+!backend/uploads/resumes/.gitkeep

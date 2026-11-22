@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>College Owner Dashboard - AI Career Platform</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --pastel-blue: #a7c7e7;
+            --pastel-green: #c1e1c1;
+            --pastel-peach: #ffd8be;
+            --pastel-lavender: #d8bfd8;
+            --pastel-mint: #b4e4d4;
+            --pastel-cream: #fdf6e3;
+            --soft-gray: #f8f9fa;
+            --soft-text: #5a6c7d;
+            --soft-dark: #4a5568;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--soft-text);
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, var(--pastel-lavender) 0%, var(--pastel-peach) 100%);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: var(--soft-dark);
+            font-weight: 500;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-owner {
+            border-top: 4px solid var(--pastel-lavender);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--soft-dark);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--pastel-lavender) 0%, var(--pastel-peach) 100%);
+            border-radius: 15px;
+            color: white;
+            padding: 20px;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .performance-card {
+            border-left: 4px solid var(--pastel-green);
+        }
+        
+        .company-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .company-logo {
+            border-radius: 10px;
+            object-fit: contain;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .map-container {
+            height: 400px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .skill-meter {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .skill-fill {
+            height: 100%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fa fa-brain me-2"></i>AI Career Platform
+            </a>
+            <div class="d-flex align-items-center">
+                <div class="dropdown">
+                    <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=College+Owner&background=d8bfd8&color=fff" 
+                             alt="College Owner" class="rounded-circle me-2" width="32" height="32">
+                        <span class="text-dark">College Owner</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="index.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-md-block">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#studentManagement">
+                                <i class="fas fa-user-graduate"></i> Student Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#employabilityDashboard">
+                                <i class="fas fa-chart-bar"></i> Employability Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#placementAnalytics">
+                                <i class="fas fa-chart-line"></i> Placement Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#companyPartnerships">
+                                <i class="fas fa-handshake"></i> Company Partnerships
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-calendar-alt"></i> Campus Drives
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-file-invoice-dollar"></i> Financial Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-cogs"></i> System Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-users-cog"></i> Staff Management
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" id="dashboardSection">
+                <!-- Welcome Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">College Owner Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download me-1"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card card-owner h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Students
+                                        </div>
+                                        <div class="stat-number">2,847</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user-graduate fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card card-owner h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Placement Rate
+                                        </div>
+                                        <div class="stat-number">78%</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-chart-line fa-2x text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card card-owner h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Partner Companies
+                                        </div>
+                                        <div class="stat-number">156</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-handshake fa-2x text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card card-owner h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            This Month Placements
+                                        </div>
+                                        <div class="stat-number">42</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-briefcase fa-2x text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile and Key Metrics -->
+                <div class="row">
+                    <!-- Profile Card -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="profile-header text-center mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=College+Owner&background=fff&color=d8bfd8&size=100" 
+                                         alt="College Owner" class="rounded-circle mb-3" width="100" height="100">
+                                    <h5 class="card-title text-white">College Owner</h5>
+                                    <p class="text-white mb-0">Director</p>
+                                    <p class="text-white">BPUT University</p>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary"><i class="fas fa-edit me-2"></i>Edit Profile</button>
+                                    <button class="btn btn-outline-success"><i class="fas fa-plus me-2"></i>Add New Program</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-pie me-2"></i>Key Performance Metrics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="performance-card p-3 rounded">
+                                            <h3 class="text-primary">92%</h3>
+                                            <p class="mb-0">Student Satisfaction</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="performance-card p-3 rounded">
+                                            <h3 class="text-success">₹6.8L</h3>
+                                            <p class="mb-0">Avg. Package</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="performance-card p-3 rounded">
+                                            <h3 class="text-warning">45%</h3>
+                                            <p class="mb-0">Internship Conversion</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <h6>Top Recruiting Companies</h6>
+                                    <div class="d-flex flex-wrap gap-2 mt-2">
+                                        <span class="badge bg-primary p-2">Google</span>
+                                        <span class="badge bg-primary p-2">Microsoft</span>
+                                        <span class="badge bg-primary p-2">Amazon</span>
+                                        <span class="badge bg-primary p-2">TCS</span>
+                                        <span class="badge bg-primary p-2">Infosys</span>
+                                        <span class="badge bg-primary p-2">Wipro</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Performance and Upcoming Drives -->
+                <div class="row">
+                    <!-- Department Performance -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-university me-2"></i>Department Performance</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Computer Science</h6>
+                                            <p class="mb-1 text-muted">Placement Rate: 85% • Avg Package: ₹8.2L</p>
+                                        </div>
+                                        <span class="badge bg-success">Excellent</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Electronics Engineering</h6>
+                                            <p class="mb-1 text-muted">Placement Rate: 76% • Avg Package: ₹5.8L</p>
+                                        </div>
+                                        <span class="badge bg-warning">Good</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Mechanical Engineering</h6>
+                                            <p class="mb-1 text-muted">Placement Rate: 68% • Avg Package: ₹4.9L</p>
+                                        </div>
+                                        <span class="badge bg-info">Average</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Civil Engineering</h6>
+                                            <p class="mb-1 text-muted">Placement Rate: 62% • Avg Package: ₹4.5L</p>
+                                        </div>
+                                        <span class="badge bg-secondary">Needs Improvement</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Campus Drives -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-calendar-alt me-2"></i>Upcoming Campus Drives</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Google</h6>
+                                            <p class="mb-1 text-muted">March 15, 2024 • CS & IT Departments</p>
+                                            <small class="text-muted">Expected: 150+ participants</small>
+                                        </div>
+                                        <span class="badge bg-primary">Confirmed</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Microsoft</h6>
+                                            <p class="mb-1 text-muted">March 22, 2024 • All Engineering</p>
+                                            <small class="text-muted">Expected: 200+ participants</small>
+                                        </div>
+                                        <span class="badge bg-primary">Confirmed</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Amazon</h6>
+                                            <p class="mb-1 text-muted">April 5, 2024 • CS & Electronics</p>
+                                            <small class="text-muted">Expected: 180+ participants</small>
+                                        </div>
+                                        <span class="badge bg-warning">Pending Finalization</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">TCS</h6>
+                                            <p class="mb-1 text-muted">April 12, 2024 • All Departments</p>
+                                            <small class="text-muted">Expected: 300+ participants</small>
+                                        </div>
+                                        <span class="badge bg-success">Fully Booked</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Student Management Section -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" id="studentManagementSection" style="display: none;">
+                <!-- Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Student Management</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-primary" id="exportStudents">
+                                <i class="fas fa-download me-1"></i> Export Students
+                            </button>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                                <i class="fas fa-plus me-1"></i> Add Student
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <select class="form-select" id="departmentFilter">
+                            <option value="">All Departments</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Electronics">Electronics Engineering</option>
+                            <option value="Mechanical">Mechanical Engineering</option>
+                            <option value="Civil">Civil Engineering</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="yearFilter">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="placementFilter">
+                            <option value="">All Students</option>
+                            <option value="placed">Placed</option>
+                            <option value="unplaced">Unplaced</option>
+                            <option value="internship">Internship Only</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="searchStudent" placeholder="Search students...">
+                    </div>
+                </div>
+
+                <!-- Student Statistics -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">2,847</h5>
+                                <p class="card-text small">Total Students</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">1,589</h5>
+                                <p class="card-text small">Placed Students</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">758</h5>
+                                <p class="card-text small">Internships</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">500</h5>
+                                <p class="card-text small">Active Job Seekers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">78%</h5>
+                                <p class="card-text small">Placement Rate</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">₹6.8L</h5>
+                                <p class="card-text small">Avg Package</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>Student Records</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Year</th>
+                                        <th>CGPA</th>
+                                        <th>Status</th>
+                                        <th>Company</th>
+                                        <th>Package</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>BPUT2024001</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Priyanka+Das&background=a7c7e7&color=fff" 
+                                                     class="rounded-circle me-2" width="32" height="32" alt="Priyanka Das">
+                                                Priyanka Das
+                                            </div>
+                                        </td>
+                                        <td>Computer Science</td>
+                                        <td>4th Year</td>
+                                        <td>9.2</td>
+                                        <td><span class="badge bg-success">Placed</span></td>
+                                        <td>Google</td>
+                                        <td>₹18L</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary" title="View Profile">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>BPUT2024002</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Rahul+Sharma&background=c1e1c1&color=fff" 
+                                                     class="rounded-circle me-2" width="32" height="32" alt="Rahul Sharma">
+                                                Rahul Sharma
+                                            </div>
+                                        </td>
+                                        <td>Electronics Engineering</td>
+                                        <td>4th Year</td>
+                                        <td>8.7</td>
+                                        <td><span class="badge bg-success">Placed</span></td>
+                                        <td>Microsoft</td>
+                                        <td>₹15L</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>BPUT2024003</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Anjali+Patnaik&background=ffd8be&color=fff" 
+                                                     class="rounded-circle me-2" width="32" height="32" alt="Anjali Patnaik">
+                                                Anjali Patnaik
+                                            </div>
+                                        </td>
+                                        <td>Mechanical Engineering</td>
+                                        <td>4th Year</td>
+                                        <td>8.1</td>
+                                        <td><span class="badge bg-warning">Internship</span></td>
+                                        <td>TATA Motors</td>
+                                        <td>₹25k/month</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>BPUT2024004</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Siddharth+Reddy&background=d8bfd8&color=fff" 
+                                                     class="rounded-circle me-2" width="32" height="32" alt="Siddharth Reddy">
+                                                Siddharth Reddy
+                                            </div>
+                                        </td>
+                                        <td>Computer Science</td>
+                                        <td>4th Year</td>
+                                        <td>7.8</td>
+                                        <td><span class="badge bg-danger">Unplaced</span></td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>BPUT2024005</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Neha+Gupta&background=b4e4d4&color=fff" 
+                                                     class="rounded-circle me-2" width="32" height="32" alt="Neha Gupta">
+                                                Neha Gupta
+                                            </div>
+                                        </td>
+                                        <td>Civil Engineering</td>
+                                        <td>4th Year</td>
+                                        <td>8.5</td>
+                                        <td><span class="badge bg-success">Placed</span></td>
+                                        <td>L&T Construction</td>
+                                        <td>₹6.5L</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <nav aria-label="Student pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University Employability Dashboard Section -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" id="employabilityDashboardSection" style="display: none;">
+                <!-- Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">University Employability Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i> Export Report
+                            </button>
+                            <button class="btn btn-sm btn-primary">
+                                <i class="fas fa-sync-alt me-1"></i> Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overview Cards -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Overall Employability
+                                        </div>
+                                        <div class="stat-number">78%</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-chart-line fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Skill Gap Index
+                                        </div>
+                                        <div class="stat-number">22%</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-exclamation-triangle fa-2x text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Industry Alignment
+                                        </div>
+                                        <div class="stat-number">68%</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-industry fa-2x text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Regional Coverage
+                                        </div>
+                                        <div class="stat-number">15</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-map-marker-alt fa-2x text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Gap Analysis -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Skill Gap Analysis by Department</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="skillGapChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-cogs me-2"></i>Top Skill Gaps Identified</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <h6>Computer Science</h6>
+                                    <div class="skill-meter">
+                                        <div class="skill-fill bg-danger" style="width: 35%"></div>
+                                    </div>
+                                    <small class="text-muted">AI/ML Skills: 35% gap</small>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>Electronics Engineering</h6>
+                                    <div class="skill-meter">
+                                        <div class="skill-fill bg-warning" style="width: 28%"></div>
+                                    </div>
+                                    <small class="text-muted">IoT & Embedded Systems: 28% gap</small>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>Mechanical Engineering</h6>
+                                    <div class="skill-meter">
+                                        <div class="skill-fill bg-info" style="width: 42%"></div>
+                                    </div>
+                                    <small class="text-muted">CAD/CAM & Automation: 42% gap</small>
+                                </div>
+                                <div class="mb-4">
+                                    <h6>Civil Engineering</h6>
+                                    <div class="skill-meter">
+                                        <div class="skill-fill bg-primary" style="width: 31%"></div>
+                                    </div>
+                                    <small class="text-muted">BIM & Sustainable Design: 31% gap</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placement Trends by Branch and District -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-bar me-2"></i>Placement Trends by Branch</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="branchTrendsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-map me-2"></i>District-wise Placement Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="map-container">
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-map fa-3x mb-3"></i>
+                                        <p>Odisha District-wise Placement Map</p>
+                                        <small>Interactive map showing placement density across districts</small>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <h6>Top Performing Districts</h6>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Khordha
+                                            <span class="badge bg-primary">78%</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Cuttack
+                                            <span class="badge bg-primary">72%</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Bhubaneswar
+                                            <span class="badge bg-primary">75%</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Puri
+                                            <span class="badge bg-warning">65%</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Industry Demand Forecast -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-industry me-2"></i>Industry-wise Demand Forecast</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="industryDemandChart"></canvas>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6>High Growth Industries</h6>
+                                                <ul class="list-unstyled">
+                                                    <li><i class="fas fa-arrow-up text-success me-2"></i>IT Services</li>
+                                                    <li><i class="fas fa-arrow-up text-success me-2"></i>Healthcare Tech</li>
+                                                    <li><i class="fas fa-arrow-up text-success me-2"></i>Renewable Energy</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6>Stable Industries</h6>
+                                                <ul class="list-unstyled">
+                                                    <li><i class="fas fa-minus text-warning me-2"></i>Manufacturing</li>
+                                                    <li><i class="fas fa-minus text-warning me-2"></i>Construction</li>
+                                                    <li><i class="fas fa-minus text-warning me-2"></i>Banking & Finance</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6>Declining Industries</h6>
+                                                <ul class="list-unstyled">
+                                                    <li><i class="fas fa-arrow-down text-danger me-2"></i>Traditional Retail</li>
+                                                    <li><i class="fas fa-arrow-down text-danger me-2"></i>Textiles</li>
+                                                    <li><i class="fas fa-arrow-down text-danger me-2"></i>Coal Mining</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Policy Recommendations -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-lightbulb me-2"></i>Policy Recommendations</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card border-primary mb-3">
+                                            <div class="card-header bg-primary text-white">
+                                                <h6 class="mb-0">Curriculum Enhancement</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul>
+                                                    <li>Introduce AI/ML courses across engineering branches</li>
+                                                    <li>Add industry certification programs to curriculum</li>
+                                                    <li>Increase focus on soft skills and communication</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-success mb-3">
+                                            <div class="card-header bg-success text-white">
+                                                <h6 class="mb-0">Industry Collaboration</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul>
+                                                    <li>Establish more industry-academia partnerships</li>
+                                                    <li>Create structured internship programs</li>
+                                                    <li>Invite industry experts for guest lectures</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card border-warning mb-3">
+                                            <div class="card-header bg-warning text-white">
+                                                <h6 class="mb-0">Infrastructure Development</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul>
+                                                    <li>Upgrade computer labs with latest software</li>
+                                                    <li>Establish innovation and incubation centers</li>
+                                                    <li>Create specialized labs for emerging technologies</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-info mb-3">
+                                            <div class="card-header bg-info text-white">
+                                                <h6 class="mb-0">Regional Development</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul>
+                                                    <li>Focus on skill development in low-performing districts</li>
+                                                    <li>Establish satellite placement cells in rural areas</li>
+                                                    <li>Create industry connect programs for regional industries</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placement Analytics Section -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" id="placementAnalyticsSection" style="display: none;">
+                <!-- Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Placement Analytics</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i> Export Report
+                            </button>
+                            <button class="btn btn-sm btn-primary">
+                                <i class="fas fa-sync-alt me-1"></i> Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-line me-2"></i>Placement Trends (Last 5 Years)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="placementTrendsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-pie me-2"></i>Placement Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="placementDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department-wise Analytics -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-university me-2"></i>Department-wise Placement Rate</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="departmentPlacementChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-money-bill-wave me-2"></i>Average Package by Department</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="packageByDepartmentChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Statistics -->
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-trophy me-2"></i>Top Recruiters</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Google</h6>
+                                            <small class="text-muted">25 students • Avg: ₹18L</small>
+                                        </div>
+                                        <span class="badge bg-primary">Premium</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Microsoft</h6>
+                                            <small class="text-muted">18 students • Avg: ₹15L</small>
+                                        </div>
+                                        <span class="badge bg-primary">Premium</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Amazon</h6>
+                                            <small class="text-muted">22 students • Avg: ₹14L</small>
+                                        </div>
+                                        <span class="badge bg-primary">Premium</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">TCS</h6>
+                                            <small class="text-muted">45 students • Avg: ₹4.5L</small>
+                                        </div>
+                                        <span class="badge bg-success">Mass</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Infosys</h6>
+                                            <small class="text-muted">38 students • Avg: ₹4.2L</small>
+                                        </div>
+                                        <span class="badge bg-success">Mass</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-bar me-2"></i>Monthly Placement Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Month</th>
+                                                <th>Placements</th>
+                                                <th>Internships</th>
+                                                <th>Success Rate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>January</td>
+                                                <td>45</td>
+                                                <td>28</td>
+                                                <td>82%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>February</td>
+                                                <td>52</td>
+                                                <td>35</td>
+                                                <td>85%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>March</td>
+                                                <td>48</td>
+                                                <td>42</td>
+                                                <td>79%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>April</td>
+                                                <td>38</td>
+                                                <td>25</td>
+                                                <td>75%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>May</td>
+                                                <td>42</td>
+                                                <td>30</td>
+                                                <td>81%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-target me-2"></i>Performance Metrics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="p-3 border rounded">
+                                            <h4 class="text-primary">78%</h4>
+                                            <small>Overall Placement Rate</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="p-3 border rounded">
+                                            <h4 class="text-success">92%</h4>
+                                            <small>CS Department Rate</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="p-3 border rounded">
+                                            <h4 class="text-warning">45%</h4>
+                                            <small>Internship to PPO</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="p-3 border rounded">
+                                            <h4 class="text-info">156</h4>
+                                            <small>Partner Companies</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Partnerships Section -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" id="companyPartnershipsSection" style="display: none;">
+                <!-- Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Company Partnerships</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i> Export Partners
+                            </button>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCompanyModal">
+                                <i class="fas fa-plus me-1"></i> Add Company
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partnership Statistics -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">156</h5>
+                                <p class="card-text small">Total Partners</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">42</h5>
+                                <p class="card-text small">Premium Partners</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">89</h5>
+                                <p class="card-text small">Active Recruiters</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">25</h5>
+                                <p class="card-text small">New This Year</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">₹12.5Cr</h5>
+                                <p class="card-text small">Total Packages</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body text-center py-3">
+                                <h5 class="card-title">4.8/5</h5>
+                                <p class="card-text small">Partner Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters and Search -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <select class="form-select" id="companyTypeFilter">
+                            <option value="">All Company Types</option>
+                            <option value="premium">Premium Partners</option>
+                            <option value="regular">Regular Partners</option>
+                            <option value="startup">Startups</option>
+                            <option value="mnc">MNCs</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" id="industryFilter">
+                            <option value="">All Industries</option>
+                            <option value="it">IT & Software</option>
+                            <option value="core">Core Engineering</option>
+                            <option value="finance">Finance & Banking</option>
+                            <option value="consulting">Consulting</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="searchCompany" placeholder="Search companies...">
+                    </div>
+                </div>
+
+                <!-- Companies Grid -->
+                <div class="row">
+                    <!-- Company Card 1 -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card company-card h-100">
+                            <div class="card-header bg-white text-center">
+                                <img src="https://logo.clearbit.com/google.com" alt="Google" 
+                                     class="company-logo mb-2" width="80" height="80" onerror="this.src='https://via.placeholder.com/80'">
+                                <h5 class="card-title mb-1">Google</h5>
+                                <span class="badge bg-primary">Premium Partner</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info mb-3">
+                                    <p class="text-muted small mb-2"><i class="fas fa-industry me-2"></i>IT & Software</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Bangalore, Hyderabad</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-users me-2"></i>25 Students Placed</p>
+                                    <p class="text-muted small mb-0"><i class="fas fa-money-bill-wave me-2"></i>Avg Package: ₹18L</p>
+                                </div>
+                                <div class="company-stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">Visits</small>
+                                            <h6 class="mb-0">3</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Offers</small>
+                                            <h6 class="mb-0">25</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Rating</small>
+                                            <h6 class="mb-0">4.9</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
+                                    <button class="btn btn-sm btn-outline-success">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Card 2 -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card company-card h-100">
+                            <div class="card-header bg-white text-center">
+                                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft" 
+                                     class="company-logo mb-2" width="80" height="80" onerror="this.src='https://via.placeholder.com/80'">
+                                <h5 class="card-title mb-1">Microsoft</h5>
+                                <span class="badge bg-primary">Premium Partner</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info mb-3">
+                                    <p class="text-muted small mb-2"><i class="fas fa-industry me-2"></i>IT & Software</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Hyderabad, Bangalore</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-users me-2"></i>18 Students Placed</p>
+                                    <p class="text-muted small mb-0"><i class="fas fa-money-bill-wave me-2"></i>Avg Package: ₹15L</p>
+                                </div>
+                                <div class="company-stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">Visits</small>
+                                            <h6 class="mb-0">2</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Offers</small>
+                                            <h6 class="mb-0">18</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Rating</small>
+                                            <h6 class="mb-0">4.8</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
+                                    <button class="btn btn-sm btn-outline-success">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Card 3 -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card company-card h-100">
+                            <div class="card-header bg-white text-center">
+                                <img src="https://logo.clearbit.com/tcs.com" alt="TCS" 
+                                     class="company-logo mb-2" width="80" height="80" onerror="this.src='https://via.placeholder.com/80'">
+                                <h5 class="card-title mb-1">TCS</h5>
+                                <span class="badge bg-success">Mass Recruiter</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info mb-3">
+                                    <p class="text-muted small mb-2"><i class="fas fa-industry me-2"></i>IT Services</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Pan India</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-users me-2"></i>45 Students Placed</p>
+                                    <p class="text-muted small mb-0"><i class="fas fa-money-bill-wave me-2"></i>Avg Package: ₹4.5L</p>
+                                </div>
+                                <div class="company-stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">Visits</small>
+                                            <h6 class="mb-0">4</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Offers</small>
+                                            <h6 class="mb-0">45</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Rating</small>
+                                            <h6 class="mb-0">4.2</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
+                                    <button class="btn btn-sm btn-outline-success">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Card 4 -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card company-card h-100">
+                            <div class="card-header bg-white text-center">
+                                <img src="https://logo.clearbit.com/infosys.com" alt="Infosys" 
+                                     class="company-logo mb-2" width="80" height="80" onerror="this.src='https://via.placeholder.com/80'">
+                                <h5 class="card-title mb-1">Infosys</h5>
+                                <span class="badge bg-success">Mass Recruiter</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info mb-3">
+                                    <p class="text-muted small mb-2"><i class="fas fa-industry me-2"></i>IT Services</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Pan India</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-users me-2"></i>38 Students Placed</p>
+                                    <p class="text-muted small mb-0"><i class="fas fa-money-bill-wave me-2"></i>Avg Package: ₹4.2L</p>
+                                </div>
+                                <div class="company-stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">Visits</small>
+                                            <h6 class="mb-0">3</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Offers</small>
+                                            <h6 class="mb-0">38</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Rating</small>
+                                            <h6 class="mb-0">4.1</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
+                                    <button class="btn btn-sm btn-outline-success">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Card 5 -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card company-card h-100">
+                            <div class="card-header bg-white text-center">
+                                <img src="https://logo.clearbit.com/amazon.com" alt="Amazon" 
+                                     class="company-logo mb-2" width="80" height="80" onerror="this.src='https://via.placeholder.com/80'">
+                                <h5 class="card-title mb-1">Amazon</h5>
+                                <span class="badge bg-primary">Premium Partner</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info mb-3">
+                                    <p class="text-muted small mb-2"><i class="fas fa-industry me-2"></i>E-commerce & IT</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Bangalore, Chennai</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-users me-2"></i>22 Students Placed</p>
+                                    <p class="text-muted small mb-0"><i class="fas fa-money-bill-wave me-2"></i>Avg Package: ₹14L</p>
+                                </div>
+                                <div class="company-stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">Visits</small>
+                                            <h6 class="mb-0">2</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Offers</small>
+                                            <h6 class="mb-0">22</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Rating</small>
+                                            <h6 class="mb-0">4.7</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
+                                    <button class="btn btn-sm btn-outline-success">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Card 6 -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card company-card h-100">
+                            <div class="card-header bg-white text-center">
+                                <img src="https://logo.clearbit.com/tatamotors.com" alt="TATA Motors" 
+                                     class="company-logo mb-2" width="80" height="80" onerror="this.src='https://via.placeholder.com/80'">
+                                <h5 class="card-title mb-1">TATA Motors</h5>
+                                <span class="badge bg-warning">Core Partner</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info mb-3">
+                                    <p class="text-muted small mb-2"><i class="fas fa-industry me-2"></i>Automobile</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Pune, Jamshedpur</p>
+                                    <p class="text-muted small mb-2"><i class="fas fa-users me-2"></i>15 Students Placed</p>
+                                    <p class="text-muted small mb-0"><i class="fas fa-money-bill-wave me-2"></i>Avg Package: ₹6.8L</p>
+                                </div>
+                                <div class="company-stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">Visits</small>
+                                            <h6 class="mb-0">2</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Offers</small>
+                                            <h6 class="mb-0">15</h6>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">Rating</small>
+                                            <h6 class="mb-0">4.5</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                    <button class="btn btn-sm btn-outline-warning">Edit</button>
+                                    <button class="btn btn-sm btn-outline-success">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Navigation JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide all sections first
+            function hideAllSections() {
+                document.querySelectorAll('.col-md-9.ms-sm-auto.col-lg-10.px-md-4.py-4').forEach(section => {
+                    section.style.display = 'none';
+                });
+            }
+
+            // Show specific section
+            function showSection(sectionId) {
+                hideAllSections();
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.style.display = 'block';
+                    // Initialize charts if showing analytics sections
+                    if (sectionId === 'placementAnalyticsSection' || sectionId === 'employabilityDashboardSection') {
+                        initializeCharts(sectionId);
+                    }
+                }
+            }
+
+            // Add click events to sidebar links
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute('href').substring(1); // Remove #
+                    const sectionId = target + 'Section';
+                    
+                    showSection(sectionId);
+                    
+                    // Update active state in sidebar
+                    document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Show dashboard by default
+            showSection('dashboardSection');
+            
+            // Initialize charts for analytics sections
+            function initializeCharts(sectionId) {
+                if (sectionId === 'placementAnalyticsSection') {
+                    // Placement Trends Chart (Line Chart)
+                    const trendsCtx = document.getElementById('placementTrendsChart').getContext('2d');
+                    const trendsChart = new Chart(trendsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2019', '2020', '2021', '2022', '2023'],
+                            datasets: [{
+                                label: 'Placement Rate (%)',
+                                data: [68, 72, 65, 75, 78],
+                                borderColor: '#a7c7e7',
+                                backgroundColor: 'rgba(167, 199, 231, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            }, {
+                                label: 'Avg Package (Lakhs)',
+                                data: [5.2, 5.5, 5.8, 6.2, 6.8],
+                                borderColor: '#c1e1c1',
+                                backgroundColor: 'rgba(193, 225, 193, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Percentage / Lakhs'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Placement Distribution Chart (Doughnut Chart)
+                    const distributionCtx = document.getElementById('placementDistributionChart').getContext('2d');
+                    const distributionChart = new Chart(distributionCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Placed', 'Unplaced', 'Internship', 'Higher Studies'],
+                            datasets: [{
+                                data: [78, 12, 8, 2],
+                                backgroundColor: [
+                                    '#a7c7e7',
+                                    '#ffd8be',
+                                    '#c1e1c1',
+                                    '#d8bfd8'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                }
+                            }
+                        }
+                    });
+
+                    // Department-wise Placement Rate (Bar Chart)
+                    const deptPlacementCtx = document.getElementById('departmentPlacementChart').getContext('2d');
+                    const deptPlacementChart = new Chart(deptPlacementCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Computer Science', 'Electronics', 'Mechanical', 'Civil'],
+                            datasets: [{
+                                label: 'Placement Rate (%)',
+                                data: [92, 76, 68, 62],
+                                backgroundColor: [
+                                    '#a7c7e7',
+                                    '#c1e1c1',
+                                    '#ffd8be',
+                                    '#d8bfd8'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Placement Rate (%)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Average Package by Department (Bar Chart)
+                    const packageDeptCtx = document.getElementById('packageByDepartmentChart').getContext('2d');
+                    const packageDeptChart = new Chart(packageDeptCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Computer Science', 'Electronics', 'Mechanical', 'Civil'],
+                            datasets: [{
+                                label: 'Average Package (Lakhs)',
+                                data: [8.2, 5.8, 4.9, 4.5],
+                                backgroundColor: [
+                                    '#a7c7e7',
+                                    '#c1e1c1',
+                                    '#ffd8be',
+                                    '#d8bfd8'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Package (Lakhs)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else if (sectionId === 'employabilityDashboardSection') {
+                    // Skill Gap Analysis Chart
+                    const skillGapCtx = document.getElementById('skillGapChart').getContext('2d');
+                    const skillGapChart = new Chart(skillGapCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Electrical'],
+                            datasets: [{
+                                label: 'Skill Gap (%)',
+                                data: [35, 28, 42, 31, 38],
+                                backgroundColor: [
+                                    '#a7c7e7',
+                                    '#c1e1c1',
+                                    '#ffd8be',
+                                    '#d8bfd8',
+                                    '#b4e4d4'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Skill Gap (%)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Branch Trends Chart
+                    const branchTrendsCtx = document.getElementById('branchTrendsChart').getContext('2d');
+                    const branchTrendsChart = new Chart(branchTrendsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2019', '2020', '2021', '2022', '2023'],
+                            datasets: [{
+                                label: 'Computer Science',
+                                data: [85, 88, 82, 90, 92],
+                                borderColor: '#a7c7e7',
+                                backgroundColor: 'rgba(167, 199, 231, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            }, {
+                                label: 'Electronics',
+                                data: [70, 72, 68, 74, 76],
+                                borderColor: '#c1e1c1',
+                                backgroundColor: 'rgba(193, 225, 193, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            }, {
+                                label: 'Mechanical',
+                                data: [62, 65, 60, 66, 68],
+                                borderColor: '#ffd8be',
+                                backgroundColor: 'rgba(255, 216, 190, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Placement Rate (%)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Industry Demand Forecast Chart
+                    const industryDemandCtx = document.getElementById('industryDemandChart').getContext('2d');
+                    const industryDemandChart = new Chart(industryDemandCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['IT Services', 'Manufacturing', 'Healthcare', 'Finance', 'Education', 'Construction'],
+                            datasets: [{
+                                label: 'Current Demand',
+                                data: [85, 65, 55, 70, 45, 60],
+                                backgroundColor: '#a7c7e7',
+                                borderWidth: 1
+                            }, {
+                                label: 'Projected Demand (2025)',
+                                data: [92, 68, 72, 75, 50, 58],
+                                backgroundColor: '#c1e1c1',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Demand Index'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,4052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - AI Career Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar-header i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .sidebar-header h2 {
+            color: var(--dark);
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--secondary);
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #f1f5f9;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .dashboard-section {
+            display: none;
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+        
+        .section-header {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header h2 {
+            color: var(--dark);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Score Card Styles */
+        .score-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .score-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .score-chart-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .score-label {
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .metric-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .metric-card h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        /* Gap Analysis Styles */
+        .gap-analysis {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .gap-analysis h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .skills-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .skills-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .skills-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+        }
+        
+        .skills-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .skill-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Roadmap Styles */
+        .roadmap-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .roadmap-steps {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .roadmap-steps::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+        
+        .roadmap-step {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+        }
+        
+        .roadmap-step:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .roadmap-step::before {
+            content: '';
+            position: absolute;
+            left: -2.3rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .step-duration {
+            background: #e2e8f0;
+            color: var(--secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .step-description {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .step-resources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .resource-btn {
+            display: inline-flex;
+            align-items: center;
+            background: #f1f5f9;
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .resource-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .resource-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Internship & Job Cards */
+        .opportunity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .opportunity-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .opportunity-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .opportunity-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .opportunity-header h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .company-name {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .match-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .type-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .opportunity-details {
+            padding: 1.5rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: var(--secondary);
+        }
+        
+        .detail-item i {
+            margin-right: 0.75rem;
+            width: 16px;
+            color: var(--primary);
+        }
+        
+        .opportunity-actions {
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-apply {
+            flex: 1;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-apply:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-save {
+            background: transparent;
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Profile Section - Enhanced Styles */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .profile-card h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-item label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area p {
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        /* Enhanced Profile Builder Styles */
+        .profile-builder {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .progress-info h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-info p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+
+        .progress-tracker {
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-weight: 600;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .profile-form {
+            padding: 0;
+        }
+
+        .form-section {
+            padding: 2.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .form-section:hover {
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        .section-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+        }
+
+        .section-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .section-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-title p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .required-indicator {
+            color: var(--danger);
+            font-size: 1.2rem;
+        }
+
+        .form-input, .form-select {
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-hint {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .form-feedback {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            min-height: 20px;
+        }
+
+        .form-feedback.error {
+            color: var(--danger);
+        }
+
+        .form-feedback.success {
+            color: var(--success);
+        }
+
+        /* Skills Section */
+        .skills-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: rgba(248, 250, 252, 0.8);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .skill-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .skill-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .skill-add-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .skill-add-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .skill-tag-remove {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .skill-tag-remove:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .skill-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .skill-suggestions {
+            margin-top: 1rem;
+        }
+
+        .suggestion-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .suggestion-tag {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 0.375rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .suggestion-tag:hover {
+            background: rgba(37, 99, 235, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-upload-content i {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .upload-text h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .upload-text p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .file-preview {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(37, 99, 235, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .file-preview.show {
+            display: flex;
+        }
+
+        .file-preview i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .file-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .file-size {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .file-remove:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            padding: 2rem;
+            background: rgba(248, 250, 252, 0.8);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Career Recommendation Styles */
+        .recommendation-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .recommendation-header h3 {
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .recommendation-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendation-btn:hover {
+            background: #e69007;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .recommendation-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .recommendation-content.active {
+            display: block;
+        }
+
+        .recommendation-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .recommendation-card h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-card p {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-metrics {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric-tag {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            color: var(--dark);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--primary);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .toast-close:hover {
+            color: var(--dark);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Tabs for Internships and Jobs */
+        .opportunity-tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .opportunity-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .opportunity-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .opportunity-tab:hover {
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+            .score-container {
+                grid-template-columns: 1fr;
+            }
+            .skills-comparison {
+                grid-template-columns: 1fr;
+            }
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .opportunity-grid {
+                grid-template-columns: 1fr;
+            }
+            .recommendation-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .recommendation-metrics {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .opportunity-tabs {
+                flex-direction: column;
+            }
+            .opportunity-tab {
+                width: 100%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-graduation-cap"></i>
+                <h2>Student Portal</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" onclick="switchSection('overview')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-item" onclick="switchSection('profile')">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a class="nav-item" onclick="switchSection('career-path')">
+                    <i class="fas fa-road"></i>
+                    <span>Career Path</span>
+                </a>
+                <a class="nav-item" onclick="switchSection('opportunities')">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Internships & Jobs</span>
+                </a>
+                <a class="nav-item" onclick="switchSection('resources')">
+                    <i class="fas fa-book"></i>
+                    <span>Learning Resources</span>
+                </a>
+                <a class="nav-item" onclick="switchSection('assessments')">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Assessments</span>
+                </a>
+                <a class="nav-item" href="INDEXX.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Back to Home</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1>Student Dashboard</h1>
+                <div class="user-info">
+                    <span>Welcome, John Doe</span>
+                    <div class="avatar">JD</div>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <div class="section-header">
+                    <h2>Career Readiness Overview</h2>
+                    <p class="text-muted">Your current career readiness score and recommendations</p>
+                </div>
+
+                <!-- Score Section -->
+                <div class="score-container">
+                    <div class="score-card">
+                        <div class="score-chart-container">
+                            <canvas id="readinessChart"></canvas>
+                            <div class="score-value">78%</div>
+                        </div>
+                        <h3 class="score-label">Career Readiness Score</h3>
+                        <p class="text-muted">Based on your CGPA and skills assessment</p>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <i class="fas fa-code"></i>
+                            <h4>Technical Skills</h4>
+                            <div class="metric-value">85%</div>
+                        </div>
+                        <div class="metric-card">
+                            <i class="fas fa-users"></i>
+                            <h4>Soft Skills</h4>
+                            <div class="metric-value">70%</div>
+                        </div>
+                        <div class="metric-card">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h4>Academic Score</h4>
+                            <div class="metric-value">90%</div>
+                        </div>
+                        <div class="metric-card">
+                            <i class="fas fa-briefcase"></i>
+                            <h4>Experience</h4>
+                            <div class="metric-value">65%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Gap Analysis -->
+                <div class="gap-analysis">
+                    <h3>Skill Gap Analysis</h3>
+                    <div class="skills-comparison">
+                        <div>
+                            <h5>Your Current Skills</h5>
+                            <ul class="skills-list">
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-check"></i></div>
+                                    <span>Python Programming</span>
+                                </li>
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-check"></i></div>
+                                    <span>Data Analysis</span>
+                                </li>
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-check"></i></div>
+                                    <span>Machine Learning Basics</span>
+                                </li>
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-check"></i></div>
+                                    <span>SQL Databases</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>Skills Needed for Target Role</h5>
+                            <ul class="skills-list">
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-plus"></i></div>
+                                    <span>Deep Learning</span>
+                                </li>
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-plus"></i></div>
+                                    <span>TensorFlow/PyTorch</span>
+                                </li>
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-plus"></i></div>
+                                    <span>Cloud Computing (AWS)</span>
+                                </li>
+                                <li>
+                                    <div class="skill-icon"><i class="fas fa-plus"></i></div>
+                                    <span>Big Data Technologies</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggested Career Path -->
+                <div class="roadmap-container">
+                    <h3>Suggested Career Path: Machine Learning Engineer</h3>
+                    <div class="roadmap-steps">
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Foundation Phase (1-2 months)</h4>
+                                <span class="step-duration">2 months</span>
+                            </div>
+                            <p class="step-description">Build strong fundamentals in Python, statistics, and linear algebra</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> PDF Notes
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> Video Tutorials
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> Short Test
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Machine Learning Basics (2-3 months)</h4>
+                                <span class="step-duration">3 months</span>
+                            </div>
+                            <p class="step-description">Learn supervised and unsupervised learning algorithms</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> PDF Notes
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> Video Tutorials
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> Short Test
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Deep Learning (3-4 months)</h4>
+                                <span class="step-duration">4 months</span>
+                            </div>
+                            <p class="step-description">Master neural networks, CNNs, RNNs and TensorFlow/PyTorch</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> PDF Notes
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> Video Tutorials
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> Short Test
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Opportunities -->
+                <h3 class="mt-5 mb-3">Recommended Opportunities</h3>
+                <div class="opportunity-grid">
+                    <div class="opportunity-card">
+                        <div class="opportunity-header">
+                            <h4>AI Research Intern</h4>
+                            <p class="company-name">Tech Solutions Inc.</p>
+                            <span class="match-badge">92% Match</span>
+                            <span class="type-badge">Internship</span>
+                        </div>
+                        <div class="opportunity-details">
+                            <div class="detail-item">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>₹25,000/month</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Bhubaneswar</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>6 months</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                <span>Python, English</span>
+                            </div>
+                        </div>
+                        <div class="opportunity-actions">
+                            <button class="btn-apply" onclick="applyForOpportunity('AI Research Intern', 'Tech Solutions Inc.')">Apply Now</button>
+                            <button class="btn-save" onclick="saveOpportunity('AI Research Intern', 'Tech Solutions Inc.')">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="opportunity-card">
+                        <div class="opportunity-header">
+                            <h4>Data Science Intern</h4>
+                            <p class="company-name">Data Analytics Pro</p>
+                            <span class="match-badge">85% Match</span>
+                            <span class="type-badge">Internship</span>
+                        </div>
+                        <div class="opportunity-details">
+                            <div class="detail-item">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>₹20,000/month</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Remote</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>3 months</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                <span>Python, English</span>
+                            </div>
+                        </div>
+                        <div class="opportunity-actions">
+                            <button class="btn-apply" onclick="applyForOpportunity('Data Science Intern', 'Data Analytics Pro')">Apply Now</button>
+                            <button class="btn-save" onclick="saveOpportunity('Data Science Intern', 'Data Analytics Pro')">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section with Enhanced Builder -->
+            <section id="profile" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Student Profile</h2>
+                    <p class="text-muted">Complete your profile to unlock personalized career recommendations</p>
+                </div>
+
+                <div class="profile-builder">
+                    <!-- Progress Header -->
+                    <div class="progress-header">
+                        <div class="progress-info">
+                            <h1>Build Your Student Profile</h1>
+                            <p>Complete your profile to unlock personalized career recommendations</p>
+                        </div>
+                        <div class="progress-tracker">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <span class="progress-text" id="progressText">0% Complete</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <form class="profile-form" id="studentProfileForm">
+                        <!-- Personal Information Section -->
+                        <section class="form-section" data-section="personal">
+                            <div class="section-header">
+                                <div class="section-number">1</div>
+                                <div class="section-title">
+                                    <h2>Personal Information</h2>
+                                    <p>Basic details about yourself</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="fullName" class="form-label">
+                                        Full Name
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <input type="text" id="fullName" class="form-input" placeholder="Enter your full name" required>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email" class="form-label">
+                                        Email Address
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <input type="email" id="email" class="form-input" placeholder="Enter your email address" required>
+                                    <div class="form-feedback"></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Academic Information Section -->
+                        <section class="form-section" data-section="academic">
+                            <div class="section-header">
+                                <div class="section-number">2</div>
+                                <div class="section-title">
+                                    <h2>Academic Information</h2>
+                                    <p>Your educational background</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="degree" class="form-label">
+                                        Degree Program
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="degree" class="form-select" required>
+                                        <option value="">Select your degree</option>
+                                        <option value="B.Tech">Bachelor of Technology (B.Tech)</option>
+                                        <option value="M.Tech">Master of Technology (M.Tech)</option>
+                                        <option value="MBA">Master of Business Administration</option>
+                                        <option value="BBA">Bachelor of Business Administration</option>
+                                        <option value="BCA">Bachelor of Computer Applications</option>
+                                        <option value="MCA">Master of Computer Applications</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="institution" class="form-label">
+                                        Institution
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <input type="text" id="institution" class="form-input" placeholder="Enter your college/university" required>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="branch" class="form-label">
+                                        Branch/Department
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="branch" class="form-select" required>
+                                        <option value="">Select your branch</option>
+                                        <option value="CSE">Computer Science & Engineering</option>
+                                        <option value="IT">Information Technology</option>
+                                        <option value="ECE">Electronics & Communication</option>
+                                        <option value="EEE">Electrical & Electronics</option>
+                                        <option value="ME">Mechanical Engineering</option>
+                                        <option value="CE">Civil Engineering</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cgpa" class="form-label">
+                                        CGPA (out of 10)
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <input type="number" id="cgpa" class="form-input" min="0" max="10" step="0.01" placeholder="Enter your CGPA" required>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="graduationYear" class="form-label">
+                                        Expected Graduation Year
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="graduationYear" class="form-select" required>
+                                        <option value="">Select graduation year</option>
+                                        <!-- Options will be populated by JavaScript -->
+                                    </select>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="semester" class="form-label">Current Semester</label>
+                                    <select id="semester" class="form-select">
+                                        <option value="">Select current semester</option>
+                                        <option value="1">1st Semester</option>
+                                        <option value="2">2nd Semester</option>
+                                        <option value="3">3rd Semester</option>
+                                        <option value="4">4th Semester</option>
+                                        <option value="5">5th Semester</option>
+                                        <option value="6">6th Semester</option>
+                                        <option value="7">7th Semester</option>
+                                        <option value="8">8th Semester</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Skills Section -->
+                        <section class="form-section" data-section="skills">
+                            <div class="section-header">
+                                <div class="section-number">3</div>
+                                <div class="section-title">
+                                    <h2>Skills & Competencies</h2>
+                                    <p>Your technical and soft skills</p>
+                                </div>
+                            </div>
+                           
+                            <div class="skills-container">
+                                <div class="skill-category">
+                                    <label class="form-label">
+                                        Technical Skills
+                                        <span class="skill-count" id="techSkillsCount">0</span>
+                                    </label>
+                                    <div class="skill-input-group">
+                                        <input type="text" id="technicalSkills" class="skill-input" placeholder="Add technical skills (e.g., Python, JavaScript, React)">
+                                        <button type="button" class="skill-add-btn" data-type="technical">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="skills-tags" id="technicalSkillsContainer"></div>
+                                    <div class="skill-suggestions">
+                                        <span class="suggestion-label">Suggestions:</span>
+                                        <div class="suggestion-tags">
+                                            <span class="suggestion-tag" data-skill="Python">Python</span>
+                                            <span class="suggestion-tag" data-skill="JavaScript">JavaScript</span>
+                                            <span class="suggestion-tag" data-skill="Java">Java</span>
+                                            <span class="suggestion-tag" data-skill="React">React</span>
+                                            <span class="suggestion-tag" data-skill="Node.js">Node.js</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="skill-category">
+                                    <label class="form-label">
+                                        Soft Skills
+                                        <span class="skill-count" id="softSkillsCount">0</span>
+                                    </label>
+                                    <div class="skill-input-group">
+                                        <input type="text" id="softSkills" class="skill-input" placeholder="Add soft skills (e.g., Communication, Leadership)">
+                                        <button type="button" class="skill-add-btn" data-type="soft">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="skills-tags" id="softSkillsContainer"></div>
+                                    <div class="skill-suggestions">
+                                        <span class="suggestion-label">Suggestions:</span>
+                                        <div class="suggestion-tags">
+                                            <span class="suggestion-tag" data-skill="Communication">Communication</span>
+                                            <span class="suggestion-tag" data-skill="Leadership">Leadership</span>
+                                            <span class="suggestion-tag" data-skill="Teamwork">Teamwork</span>
+                                            <span class="suggestion-tag" data-skill="Problem Solving">Problem Solving</span>
+                                            <span class="suggestion-tag" data-skill="Time Management">Time Management</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Career Preferences Section -->
+                        <section class="form-section" data-section="career">
+                            <div class="section-header">
+                                <div class="section-number">4</div>
+                                <div class="section-title">
+                                    <h2>Career Preferences</h2>
+                                    <p>Your interests and career goals</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="interestedDomains" class="form-label">
+                                        Interested Domains
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="interestedDomains" class="form-select" required>
+                                        <option value="">Select your interested domain</option>
+                                        <option value="Web Development">Web Development</option>
+                                        <option value="Mobile App Development">Mobile App Development</option>
+                                        <option value="Data Science">Data Science & Analytics</option>
+                                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                        <option value="Machine Learning">Machine Learning</option>
+                                        <option value="Cloud Computing">Cloud Computing</option>
+                                        <option value="Cybersecurity">Cybersecurity</option>
+                                        <option value="DevOps">DevOps</option>
+                                        <option value="UI/UX Design">UI/UX Design</option>
+                                        <option value="Digital Marketing">Digital Marketing</option>
+                                        <option value="Finance">Finance & Banking</option>
+                                        <option value="Consulting">Business Consulting</option>
+                                        <option value="Research">Research & Development</option>
+                                        <option value="Core Engineering">Core Engineering</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="careerGoals" class="form-label">
+                                        Career Goals
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <select id="careerGoals" class="form-select" required>
+                                        <option value="">Select your career goal</option>
+                                        <option value="Internship">Get an Internship</option>
+                                        <option value="Full-time Job">Get a Full-time Job</option>
+                                        <option value="Higher Studies">Pursue Higher Studies</option>
+                                        <option value="Entrepreneurship">Start a Business</option>
+                                        <option value="Research">Research Career</option>
+                                        <option value="Government Job">Government Job</option>
+                                        <option value="Freelancing">Freelancing</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="preferredLocation" class="form-label">Preferred Job Locations</label>
+                                    <input type="text" id="preferredLocation" class="form-input" placeholder="e.g., Bangalore, Hyderabad, Remote, etc.">
+                                    <div class="form-hint">Separate multiple locations with commas</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Resume Section -->
+                        <section class="form-section" data-section="resume">
+                            <div class="section-header">
+                                <div class="section-number">5</div>
+                                <div class="section-title">
+                                    <h2>Resume & Portfolio</h2>
+                                    <p>Upload your resume and portfolio links</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="resumeFile" class="form-label">
+                                        Upload Resume
+                                        <span class="required-indicator">*</span>
+                                    </label>
+                                    <div class="file-upload-area" id="resumeUpload">
+                                        <div class="file-upload-content">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <div class="upload-text">
+                                                <h4>Click to upload your resume</h4>
+                                                <p>Supports PDF, DOCX files (Max 5MB)</p>
+                                            </div>
+                                            <input type="file" id="resumeFile" accept=".pdf,.docx" hidden>
+                                        </div>
+                                        <div class="file-preview" id="filePreview">
+                                            <i class="fas fa-file"></i>
+                                            <div class="file-info">
+                                                <span class="file-name" id="resumeFileName">No file chosen</span>
+                                                <span class="file-size" id="resumeFileSize"></span>
+                                            </div>
+                                            <button type="button" class="file-remove" id="removeResume">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-feedback"></div>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="portfolioLink" class="form-label">Portfolio/GitHub Link</label>
+                                    <input type="url" id="portfolioLink" class="form-input" placeholder="https://github.com/yourusername or https://yourportfolio.com">
+                                    <div class="form-hint">Optional: Share your GitHub, LinkedIn, or personal portfolio</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="saveDraftBtn">
+                                <i class="fas fa-save"></i>
+                                Save as Draft
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-rocket"></i>
+                                Complete Profile & Get Recommendations
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Career Path Section -->
+            <section id="career-path" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Career Path Development</h2>
+                    <p class="text-muted">Your personalized roadmap to becoming a Machine Learning Engineer</p>
+                </div>
+                
+                <!-- Career Recommendation Section -->
+                <div class="recommendation-section">
+                    <div class="recommendation-header">
+                        <h3>Personalized Career Recommendations</h3>
+                        <button class="recommendation-btn" id="getRecommendationBtn">
+                            <i class="fas fa-magic"></i>
+                            Get Your Personalized Career Recommendation
+                        </button>
+                    </div>
+                    
+                    <div class="recommendation-content" id="recommendationContent">
+                        <div class="recommendation-card">
+                            <h4>Machine Learning Engineer</h4>
+                            <p>Based on your skills in Python, Data Analysis, and interest in AI/ML, this role is an excellent fit for your profile. Machine Learning Engineers design and implement ML models and systems.</p>
+                            <div class="recommendation-metrics">
+                                <span class="metric-tag">Match Score: 92%</span>
+                                <span class="metric-tag">High Demand</span>
+                                <span class="metric-tag">Average Salary: ₹12-20 LPA</span>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <h4>Data Scientist</h4>
+                            <p>Your analytical skills and interest in data make you a great candidate for Data Science roles. Data Scientists extract insights from data and build predictive models.</p>
+                            <div class="recommendation-metrics">
+                                <span class="metric-tag">Match Score: 88%</span>
+                                <span class="metric-tag">High Growth</span>
+                                <span class="metric-tag">Average Salary: ₹10-18 LPA</span>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <h4>AI Research Scientist</h4>
+                            <p>With your strong academic background and interest in cutting-edge technology, you could excel in AI research roles focused on developing new algorithms and techniques.</p>
+                            <div class="recommendation-metrics">
+                                <span class="metric-tag">Match Score: 85%</span>
+                                <span class="metric-tag">Research Focus</span>
+                                <span class="metric-tag">Average Salary: ₹15-25 LPA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="roadmap-container">
+                    <div class="roadmap-steps">
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Month 1-2: Foundation Building</h4>
+                                <span class="step-duration">2 months</span>
+                            </div>
+                            <p class="step-description">Strengthen your programming fundamentals and mathematical background</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> Python Basics PDF
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> Statistics Tutorials
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> Foundation Test
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Month 3-5: Machine Learning Fundamentals</h4>
+                                <span class="step-duration">3 months</span>
+                            </div>
+                            <p class="step-description">Learn core ML algorithms and data preprocessing techniques</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> ML Algorithms PDF
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> Scikit-learn Tutorials
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> ML Assessment
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Month 6-9: Deep Learning & Advanced Topics</h4>
+                                <span class="step-duration">4 months</span>
+                            </div>
+                            <p class="step-description">Dive into neural networks, computer vision, and NLP</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> Deep Learning Notes
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> TensorFlow Course
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> DL Certification
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step">
+                            <div class="step-header">
+                                <h4 class="step-title">Month 10-12: Projects & Portfolio Building</h4>
+                                <span class="step-duration">3 months</span>
+                            </div>
+                            <p class="step-description">Build real-world projects and prepare for job applications</p>
+                            <div class="step-resources">
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-file-pdf"></i> Project Ideas
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fab fa-youtube"></i> Portfolio Guide
+                                </a>
+                                <a href="#" class="resource-btn">
+                                    <i class="fas fa-play-circle"></i> Mock Interviews
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Internships & Jobs Section -->
+            <section id="opportunities" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Internships & Jobs</h2>
+                    <p class="text-muted">Personalized opportunities based on your profile</p>
+                </div>
+                
+                <!-- Tabs for Internships and Jobs -->
+                <div class="opportunity-tabs">
+                    <button class="opportunity-tab active" onclick="switchTab('internships')">Internships</button>
+                    <button class="opportunity-tab" onclick="switchTab('jobs')">Jobs</button>
+                </div>
+                
+                <!-- Internships Tab -->
+                <div id="internships-tab" class="tab-content active">
+                    <div class="opportunity-grid">
+                        <!-- Internship cards will be loaded here -->
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>AI Research Intern</h4>
+                                <p class="company-name">Tech Solutions Inc.</p>
+                                <span class="match-badge">92% Match</span>
+                                <span class="type-badge">Internship</span>
+                            </div>
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₹25,000/month</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Bhubaneswar</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>6 months</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>Python, English</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="btn-apply" onclick="applyForOpportunity('AI Research Intern', 'Tech Solutions Inc.')">Apply Now</button>
+                                <button class="btn-save" onclick="saveOpportunity('AI Research Intern', 'Tech Solutions Inc.')">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>Data Science Intern</h4>
+                                <p class="company-name">Data Analytics Pro</p>
+                                <span class="match-badge">85% Match</span>
+                                <span class="type-badge">Internship</span>
+                            </div>
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₹20,000/month</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Remote</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>3 months</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>Python, English</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="btn-apply" onclick="applyForOpportunity('Data Science Intern', 'Data Analytics Pro')">Apply Now</button>
+                                <button class="btn-save" onclick="saveOpportunity('Data Science Intern', 'Data Analytics Pro')">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>Web Development Intern</h4>
+                                <p class="company-name">Web Innovators</p>
+                                <span class="match-badge">78% Match</span>
+                                <span class="type-badge">Internship</span>
+                            </div>
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₹18,000/month</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Hyderabad</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>4 months</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>JavaScript, React</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="btn-apply" onclick="applyForOpportunity('Web Development Intern', 'Web Innovators')">Apply Now</button>
+                                <button class="btn-save" onclick="saveOpportunity('Web Development Intern', 'Web Innovators')">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Jobs Tab -->
+                <div id="jobs-tab" class="tab-content">
+                    <div class="opportunity-grid">
+                        <!-- Job cards will be loaded here -->
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>Machine Learning Engineer</h4>
+                                <p class="company-name">AI Tech Solutions</p>
+                                <span class="match-badge">88% Match</span>
+                                <span class="type-badge">Full-time</span>
+                            </div>
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₹12-18 LPA</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Bangalore</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Full-time</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>Python, TensorFlow</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="btn-apply" onclick="applyForOpportunity('Machine Learning Engineer', 'AI Tech Solutions')">Apply Now</button>
+                                <button class="btn-save" onclick="saveOpportunity('Machine Learning Engineer', 'AI Tech Solutions')">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>Data Scientist</h4>
+                                <p class="company-name">DataCorp Analytics</p>
+                                <span class="match-badge">85% Match</span>
+                                <span class="type-badge">Full-time</span>
+                            </div>
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₹10-16 LPA</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Pune</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Full-time</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>Python, SQL, ML</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="btn-apply" onclick="applyForOpportunity('Data Scientist', 'DataCorp Analytics')">Apply Now</button>
+                                <button class="btn-save" onclick="saveOpportunity('Data Scientist', 'DataCorp Analytics')">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>Full Stack Developer</h4>
+                                <p class="company-name">Web Solutions Ltd.</p>
+                                <span class="match-badge">82% Match</span>
+                                <span class="type-badge">Full-time</span>
+                            </div>
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>₹8-14 LPA</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Remote</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Full-time</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-language"></i>
+                                    <span>JavaScript, React, Node.js</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="btn-apply" onclick="applyForOpportunity('Full Stack Developer', 'Web Solutions Ltd.')">Apply Now</button>
+                                <button class="btn-save" onclick="saveOpportunity('Full Stack Developer', 'Web Solutions Ltd.')">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resources Section -->
+            <section id="resources" class="dashboard-section">
+    <div class="section-header">
+        <h2>Learning Resources</h2>
+        <p class="text-muted">Curated materials to help you fill skill gaps</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="profile-card h-100">
+                <h3>PDF Resources</h3>
+                <div class="resources-list">
+                    <div class="info-item">
+                        <label>Python for Data Science</label>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Download</a>
+                    </div>
+                    <div class="info-item">
+                        <label>Machine Learning Fundamentals</label>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Download</a>
+                    </div>
+                    <div class="info-item">
+                        <label>Deep Learning Notes</label>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Download</a>
+                    </div>
+                    <div class="info-item">
+                        <label>Statistics for ML</label>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Download</a>
+                    </div>
+                    <div class="info-item">
+                        <label>Sample Programming Guide</label>
+                        <a href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" class="btn btn-sm btn-outline-primary" target="_blank">Download</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="profile-card h-100">
+                <h3>Video Tutorials</h3>
+                <div class="resources-list">
+                    <div class="info-item">
+                        <label>Python Crash Course</label>
+                        <a href="https://youtu.be/7wnove7K-ZQ?si=km2laqsHAJ5DF_EZ" class="btn btn-sm btn-outline-danger" target="_blank">
+                            <i class="fab fa-youtube"></i> Watch
+                        </a>
+                    </div>
+                    <div class="info-item">
+                        <label>ML with Scikit-learn</label>
+                        <a href="#" class="btn btn-sm btn-outline-danger">
+                            <i class="fab fa-youtube"></i> Watch
+                        </a>
+                    </div>
+                    <div class="info-item">
+                        <label>TensorFlow Tutorials</label>
+                        <a href="#" class="btn btn-sm btn-outline-danger">
+                            <i class="fab fa-youtube"></i> Watch
+                        </a>
+                    </div>
+                    <div class="info-item">
+                        <label>Data Visualization</label>
+                        <a href="#" class="btn btn-sm btn-outline-danger">
+                            <i class="fab fa-youtube"></i> Watch
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- Assessments Section -->
+            <section id="assessments" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Skill Assessments</h2>
+                    <p class="text-muted">Test your knowledge and track your progress</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="profile-card h-100">
+                            <h3>Available Tests</h3>
+                            <div class="resources-list">
+                                <div class="info-item">
+                                    <label>Python Programming Test</label>
+                                    <span class="badge bg-success">Completed</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Data Structures & Algorithms</label>
+                                    <a href="#" class="btn btn-sm btn-primary">Start Test</a>
+                                </div>
+                                <div class="info-item">
+                                    <label>Machine Learning Fundamentals</label>
+                                    <a href="#" class="btn btn-sm btn-primary">Start Test</a>
+                                </div>
+                                <div class="info-item">
+                                    <label>SQL Database Test</label>
+                                    <span class="badge bg-warning">In Progress</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="profile-card h-100">
+                            <h3>Assessment Results</h3>
+                            <div class="resources-list">
+                                <div class="info-item">
+                                    <label>Python Programming</label>
+                                    <span class="badge bg-success">85%</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Data Structures</label>
+                                    <span class="badge bg-warning">72%</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Machine Learning</label>
+                                    <span class="badge bg-primary">68%</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>SQL Databases</label>
+                                    <span class="badge bg-info">In Progress</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">Success</div>
+            <div class="toast-message">Your profile has been saved successfully!</div>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- Firebase Integration Script -->
+<!-- Firebase Integration Script -->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAyqsO4KBk6_Z5ZVWCfFRILY6o02s43u3s",
+        authDomain: "farmer-aed8f.firebaseapp.com",
+        databaseURL: "https://farmer-aed8f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "farmer-aed8f",
+        storageBucket: "farmer-aed8f.firebasestorage.app",
+        messagingSenderId: "73514618788",
+        appId: "1:73514618788:web:a1b8d30417371ebf38fb31",
+        measurementId: "G-M36P2R8JRR"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Function to sanitize email for Firebase path
+    function sanitizeEmailForPath(email) {
+        return email
+            .toLowerCase()
+            .replace(/@/g, '_at_')
+            .replace(/\./g, '_dot_')
+            .replace(/#/g, '_hash_')
+            .replace(/\$/g, '_dollar_')
+            .replace(/\[/g, '_lbracket_')
+            .replace(/\]/g, '_rbracket_')
+            .replace(/\//g, '_slash_');
+    }
+
+    // Firebase functions for frontend
+    window.firebaseApp = {
+        saveProfile: async (profileData) => {
+            try {
+                const userId = profileData.email ? sanitizeEmailForPath(profileData.email) : 'default-user';
+                await set(ref(database, 'students/' + userId), {
+                    ...profileData,
+                    lastUpdated: new Date().toISOString()
+                });
+                return { success: true, userId: userId };
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                return { success: false, error: error.message };
+            }
+        },
+
+        loadProfile: async (email) => {
+            try {
+                const userId = email ? sanitizeEmailForPath(email) : 'default-user';
+                const snapshot = await get(child(ref(database), 'students/' + userId));
+                if (snapshot.exists()) {
+                    return { success: true, data: snapshot.val() };
+                } else {
+                    return { success: false, error: 'No data found' };
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                return { success: false, error: error.message };
+            }
+        },
+
+        // Function to get all opportunities (jobs/internships)
+        getOpportunities: async () => {
+            try {
+                console.log('Fetching opportunities from Firebase...');
+                const snapshot = await get(child(ref(database), 'opportunities/'));
+                console.log('Opportunities snapshot:', snapshot.exists());
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    console.log('Opportunities data:', data);
+                    return { success: true, data: data };
+                } else {
+                    console.log('No opportunities found in Firebase');
+                    return { success: false, error: 'No opportunities found' };
+                }
+            } catch (error) {
+                console.error('Error fetching opportunities:', error);
+                return { success: false, error: error.message };
+            }
+        },
+
+        // Real-time listener for opportunities
+        listenToOpportunities: (callback) => {
+            console.log('Setting up real-time listener for opportunities');
+            const opportunitiesRef = ref(database, 'opportunities/');
+            return onValue(opportunitiesRef, (snapshot) => {
+                console.log('Real-time update received:', snapshot.exists());
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    console.log('Real-time opportunities:', data);
+                    callback({ success: true, data: data });
+                } else {
+                    callback({ success: false, error: 'No opportunities found' });
+                }
+            });
+        },
+
+        // Apply for an opportunity
+        applyForOpportunity: async (opportunityId, studentData) => {
+            try {
+                const applicationId = ref(database).child('applications').push().key;
+                const applicationData = {
+                    id: applicationId,
+                    opportunityId: opportunityId,
+                    studentData: studentData,
+                    appliedAt: new Date().toISOString(),
+                    status: 'pending'
+                };
+                
+                await set(ref(database, 'applications/' + applicationId), applicationData);
+                
+                // Also add to opportunity's applicants list
+                const opportunityRef = ref(database, `opportunities/${opportunityId}/applicants/${applicationId}`);
+                await set(opportunityRef, {
+                    studentId: studentData.email ? sanitizeEmailForPath(studentData.email) : 'default-user',
+                    appliedAt: new Date().toISOString(),
+                    status: 'pending'
+                });
+                
+                return { success: true, applicationId: applicationId };
+            } catch (error) {
+                console.error('Error applying for opportunity:', error);
+                return { success: false, error: error.message };
+            }
+        }
+    };
+</script>
+
+<script>
+    // Opportunities Management
+    class OpportunitiesManager {
+        constructor() {
+            this.opportunities = [];
+            this.init();
+        }
+
+        init() {
+            this.loadOpportunities();
+            this.setupRealTimeListener();
+        }
+
+        async loadOpportunities() {
+            try {
+                const result = await window.firebaseApp.getOpportunities();
+                
+                if (result.success) {
+                    this.opportunities = this.transformOpportunitiesData(result.data);
+                    this.renderOpportunities();
+                    this.updateOpportunitiesCount();
+                } else {
+                    console.log('No opportunities found or error:', result.error);
+                }
+            } catch (error) {
+                console.error('Error loading opportunities:', error);
+            }
+        }
+
+        setupRealTimeListener() {
+            window.firebaseApp.listenToOpportunities((result) => {
+                if (result.success) {
+                    this.opportunities = this.transformOpportunitiesData(result.data);
+                    this.renderOpportunities();
+                    this.updateOpportunitiesCount();
+                    showToast('New opportunities available!', 'info');
+                }
+            });
+        }
+
+        transformOpportunitiesData(data) {
+            const opportunities = [];
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    opportunities.push({
+                        id: key,
+                        ...data[key]
+                    });
+                }
+            }
+            return opportunities.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        renderOpportunities() {
+            this.renderInternships();
+            this.renderJobs();
+        }
+
+        renderInternships() {
+            const internshipsContainer = document.querySelector('#internships-tab .opportunity-grid');
+            const internships = this.opportunities.filter(opp => 
+                opp.type === 'internship' || opp.title?.toLowerCase().includes('intern')
+            );
+
+            if (internships.length === 0) {
+                internshipsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No internships available</h4>
+                        <p class="text-muted">Check back later for new opportunities</p>
+                    </div>
+                `;
+                return;
+            }
+
+            internshipsContainer.innerHTML = internships.map(opportunity => 
+                this.createOpportunityCard(opportunity)
+            ).join('');
+        }
+
+        renderJobs() {
+            const jobsContainer = document.querySelector('#jobs-tab .opportunity-grid');
+            const jobs = this.opportunities.filter(opp => 
+                opp.type === 'job' || !opp.title?.toLowerCase().includes('intern')
+            );
+
+            if (jobs.length === 0) {
+                jobsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No jobs available</h4>
+                        <p class="text-muted">Check back later for new opportunities</p>
+                    </div>
+                `;
+                return;
+            }
+
+            jobsContainer.innerHTML = jobs.map(opportunity => 
+                this.createOpportunityCard(opportunity)
+            ).join('');
+        }
+
+        createOpportunityCard(opportunity) {
+            const isInternship = opportunity.type === 'internship' || opportunity.title?.toLowerCase().includes('intern');
+            const matchScore = this.calculateMatchScore(opportunity);
+            
+            return `
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <h4>${opportunity.title || 'Untitled Position'}</h4>
+                        <p class="company-name">${opportunity.company || 'Company not specified'}</p>
+                        <span class="match-badge">${matchScore}% Match</span>
+                        <span class="type-badge">${isInternship ? 'Internship' : 'Job'}</span>
+                    </div>
+                    <div class="opportunity-details">
+                        ${opportunity.salary ? `
+                        <div class="detail-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>${opportunity.salary}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.location ? `
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${opportunity.location}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.duration ? `
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>${opportunity.duration}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.requirements ? `
+                        <div class="detail-item">
+                            <i class="fas fa-language"></i>
+                            <span>${opportunity.requirements}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.description ? `
+                        <div class="detail-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>${opportunity.description.substring(0, 100)}...</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="opportunity-actions">
+                        <button class="btn-apply" onclick="applyForOpportunity('${opportunity.id}', '${opportunity.title}', '${opportunity.company}')">
+                            Apply Now
+                        </button>
+                        <button class="btn-save" onclick="saveOpportunity('${opportunity.id}', '${opportunity.title}', '${opportunity.company}')">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        calculateMatchScore(opportunity) {
+            // Simple match score calculation based on skills and preferences
+            // You can enhance this with actual AI matching logic
+            let score = Math.floor(Math.random() * 30) + 70; // Random score between 70-100 for demo
+            
+            // Adjust based on opportunity type and student preferences
+            const studentProfile = window.studentProfile?.formData || {};
+            if (studentProfile.interestedDomains && opportunity.title) {
+                if (opportunity.title.toLowerCase().includes(studentProfile.interestedDomains.toLowerCase())) {
+                    score += 10;
+                }
+            }
+            
+            return Math.min(score, 95); // Cap at 95%
+        }
+
+        updateOpportunitiesCount() {
+            const internshipsCount = this.opportunities.filter(opp => 
+                opp.type === 'internship' || opp.title?.toLowerCase().includes('intern')
+            ).length;
+            
+            const jobsCount = this.opportunities.filter(opp => 
+                opp.type === 'job' || !opp.title?.toLowerCase().includes('intern')
+            ).length;
+
+            // Update tab badges if needed
+            const internshipTab = document.querySelector('.opportunity-tab:nth-child(1)');
+            const jobsTab = document.querySelector('.opportunity-tab:nth-child(2)');
+            
+            if (internshipTab) {
+                internshipTab.innerHTML = `Internships ${internshipsCount > 0 ? `(${internshipsCount})` : ''}`;
+            }
+            if (jobsTab) {
+                jobsTab.innerHTML = `Jobs ${jobsCount > 0 ? `(${jobsCount})` : ''}`;
+            }
+        }
+    }
+
+    // Global functions for opportunity actions
+    async function applyForOpportunity(opportunityId, position, company) {
+        try {
+            const studentProfile = window.studentProfile?.collectFormData() || {
+                fullName: 'John Doe',
+                email: 'john.doe@example.com'
+            };
+
+            const result = await window.firebaseApp.applyForOpportunity(opportunityId, studentProfile);
+            
+            if (result.success) {
+                showToast(`Application submitted for ${position} at ${company}`, 'success');
+                
+                // Update the button state
+                const button = event.target;
+                button.textContent = 'Applied ✓';
+                button.disabled = true;
+                button.style.background = '#10b981';
+                
+                // Update in local state
+                const opportunitiesManager = window.opportunitiesManager;
+                const opportunity = opportunitiesManager.opportunities.find(opp => opp.id === opportunityId);
+                if (opportunity) {
+                    opportunity.applied = true;
+                }
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error('Error applying for opportunity:', error);
+            showToast('Error submitting application: ' + error.message, 'error');
+        }
+    }
+
+    function saveOpportunity(opportunityId, position, company) {
+        const button = event.target;
+        const icon = button.querySelector('i');
+        
+        // Toggle saved state
+        const isSaved = icon.classList.contains('fas');
+        
+        if (!isSaved) {
+            // Save the opportunity
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            button.style.borderColor = 'var(--primary)';
+            button.style.color = 'var(--primary)';
+            showToast(`${position} at ${company} saved to your favorites`, 'success');
+            
+            // Save to localStorage or Firebase
+            const savedOpportunities = JSON.parse(localStorage.getItem('savedOpportunities') || '[]');
+            if (!savedOpportunities.includes(opportunityId)) {
+                savedOpportunities.push(opportunityId);
+                localStorage.setItem('savedOpportunities', JSON.stringify(savedOpportunities));
+            }
+        } else {
+            // Unsave the opportunity
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            button.style.borderColor = 'var(--secondary)';
+            button.style.color = 'var(--secondary)';
+            showToast(`${position} at ${company} removed from favorites`, 'info');
+            
+            // Remove from localStorage
+            const savedOpportunities = JSON.parse(localStorage.getItem('savedOpportunities') || '[]');
+            const index = savedOpportunities.indexOf(opportunityId);
+            if (index > -1) {
+                savedOpportunities.splice(index, 1);
+                localStorage.setItem('savedOpportunities', JSON.stringify(savedOpportunities));
+            }
+        }
+    }
+
+    // Initialize opportunities manager when opportunities section is loaded
+    function initializeOpportunitiesManager() {
+        if (!window.opportunitiesManager) {
+            window.opportunitiesManager = new OpportunitiesManager();
+        }
+    }
+
+    // Load opportunities when opportunities section is activated
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... existing code ...
+        
+        // Initialize opportunities manager
+        initializeOpportunitiesManager();
+        
+        // Load opportunities when opportunities tab is clicked
+        document.querySelector('[onclick="switchSection(\'opportunities\')"]').addEventListener('click', function() {
+            setTimeout(() => {
+                initializeOpportunitiesManager();
+            }, 100);
+        });
+    });
+</script>
+
+
+<script>
+    // Enhanced Opportunities Management
+    class OpportunitiesManager {
+        constructor() {
+            this.opportunities = [];
+            this.isInitialized = false;
+            this.init();
+        }
+
+        init() {
+            if (this.isInitialized) return;
+            
+            console.log('Initializing OpportunitiesManager...');
+            this.isInitialized = true;
+            
+            // Load opportunities immediately
+            this.loadOpportunities();
+            
+            // Set up real-time listener
+            this.setupRealTimeListener();
+            
+            // Auto-load when opportunities section is clicked
+            this.setupSectionListener();
+        }
+
+        async loadOpportunities() {
+            try {
+                console.log('Loading opportunities...');
+                showToast('Loading opportunities...', 'info');
+                
+                const result = await window.firebaseApp.getOpportunities();
+                
+                if (result.success) {
+                    this.opportunities = this.transformOpportunitiesData(result.data);
+                    console.log(`Loaded ${this.opportunities.length} opportunities:`, this.opportunities);
+                    this.renderOpportunities();
+                    this.updateOpportunitiesCount();
+                    showToast(`Loaded ${this.opportunities.length} opportunities`, 'success');
+                } else {
+                    console.log('No opportunities found:', result.error);
+                    this.showNoOpportunitiesMessage();
+                    showToast('No opportunities available yet', 'info');
+                }
+            } catch (error) {
+                console.error('Error loading opportunities:', error);
+                this.showErrorMessage('Failed to load opportunities');
+                showToast('Error loading opportunities', 'error');
+            }
+        }
+
+        setupRealTimeListener() {
+            console.log('Setting up real-time listener...');
+            window.firebaseApp.listenToOpportunities((result) => {
+                if (result.success) {
+                    this.opportunities = this.transformOpportunitiesData(result.data);
+                    console.log('Real-time update - opportunities:', this.opportunities.length);
+                    this.renderOpportunities();
+                    this.updateOpportunitiesCount();
+                    
+                    if (this.opportunities.length > 0) {
+                        showToast('New opportunities available!', 'info');
+                    }
+                }
+            });
+        }
+
+        setupSectionListener() {
+            // Load opportunities when the opportunities section is clicked
+            document.querySelector('[onclick="switchSection(\'opportunities\')"]').addEventListener('click', () => {
+                setTimeout(() => {
+                    if (this.opportunities.length === 0) {
+                        this.loadOpportunities();
+                    }
+                }, 100);
+            });
+        }
+
+        transformOpportunitiesData(data) {
+            if (!data) return [];
+            
+            const opportunities = [];
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    opportunities.push({
+                        id: key,
+                        ...data[key]
+                    });
+                }
+            }
+            
+            // Sort by creation date, newest first
+            return opportunities.sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0);
+                const dateB = new Date(b.createdAt || 0);
+                return dateB - dateA;
+            });
+        }
+
+        renderOpportunities() {
+            this.renderInternships();
+            this.renderJobs();
+            this.renderOverviewOpportunities();
+        }
+
+        renderInternships() {
+            const internshipsContainer = document.querySelector('#internships-tab .opportunity-grid');
+            if (!internshipsContainer) {
+                console.log('Internships container not found');
+                return;
+            }
+
+            const internships = this.opportunities.filter(opp => 
+                opp.type === 'internship' || 
+                (opp.title && opp.title.toLowerCase().includes('intern')) ||
+                (opp.description && opp.description.toLowerCase().includes('intern'))
+            );
+
+            console.log(`Rendering ${internships.length} internships`);
+
+            if (internships.length === 0) {
+                internshipsContainer.innerHTML = this.getNoOpportunitiesHTML('internships');
+                return;
+            }
+
+            internshipsContainer.innerHTML = internships.map(opportunity => 
+                this.createOpportunityCard(opportunity)
+            ).join('');
+        }
+
+        renderJobs() {
+            const jobsContainer = document.querySelector('#jobs-tab .opportunity-grid');
+            if (!jobsContainer) {
+                console.log('Jobs container not found');
+                return;
+            }
+
+            const jobs = this.opportunities.filter(opp => 
+                opp.type === 'job' || 
+                !(opp.type === 'internship' || 
+                  (opp.title && opp.title.toLowerCase().includes('intern')) ||
+                  (opp.description && opp.description.toLowerCase().includes('intern')))
+            );
+
+            console.log(`Rendering ${jobs.length} jobs`);
+
+            if (jobs.length === 0) {
+                jobsContainer.innerHTML = this.getNoOpportunitiesHTML('jobs');
+                return;
+            }
+
+            jobsContainer.innerHTML = jobs.map(opportunity => 
+                this.createOpportunityCard(opportunity)
+            ).join('');
+        }
+
+        renderOverviewOpportunities() {
+            const overviewContainer = document.querySelector('#overview .opportunity-grid');
+            if (!overviewContainer) {
+                console.log('Overview opportunities container not found');
+                return;
+            }
+
+            // Show only top 2 opportunities in overview
+            const topOpportunities = this.opportunities.slice(0, 2);
+
+            if (topOpportunities.length === 0) {
+                // Keep the default opportunities in overview
+                return;
+            }
+
+            overviewContainer.innerHTML = topOpportunities.map(opportunity => 
+                this.createOpportunityCard(opportunity)
+            ).join('');
+        }
+
+        createOpportunityCard(opportunity) {
+            const isInternship = opportunity.type === 'internship' || 
+                               (opportunity.title && opportunity.title.toLowerCase().includes('intern'));
+            const matchScore = this.calculateMatchScore(opportunity);
+            
+            // Format salary display
+            let salaryDisplay = opportunity.salary;
+            if (!salaryDisplay && opportunity.type === 'internship') {
+                salaryDisplay = 'Stipend not specified';
+            } else if (!salaryDisplay) {
+                salaryDisplay = 'Salary not specified';
+            }
+
+            return `
+                <div class="opportunity-card" data-opportunity-id="${opportunity.id}">
+                    <div class="opportunity-header">
+                        <h4>${opportunity.title || 'Position Title Not Specified'}</h4>
+                        <p class="company-name">${opportunity.company || 'Company Not Specified'}</p>
+                        <span class="match-badge">${matchScore}% Match</span>
+                        <span class="type-badge">${isInternship ? 'Internship' : 'Job'}</span>
+                    </div>
+                    <div class="opportunity-details">
+                        ${salaryDisplay ? `
+                        <div class="detail-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>${salaryDisplay}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.location ? `
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${opportunity.location}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.duration ? `
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>${opportunity.duration}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.requirements ? `
+                        <div class="detail-item">
+                            <i class="fas fa-language"></i>
+                            <span>${this.truncateText(opportunity.requirements, 50)}</span>
+                        </div>
+                        ` : ''}
+                        ${opportunity.description ? `
+                        <div class="detail-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>${this.truncateText(opportunity.description, 80)}</span>
+                        </div>
+                        ` : ''}
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Posted: ${this.formatDate(opportunity.createdAt)}</span>
+                        </div>
+                    </div>
+                    <div class="opportunity-actions">
+                        <button class="btn-apply" onclick="applyForOpportunity('${opportunity.id}', '${this.escapeHtml(opportunity.title || 'Unknown')}', '${this.escapeHtml(opportunity.company || 'Unknown')}')">
+                            Apply Now
+                        </button>
+                        <button class="btn-save" onclick="saveOpportunity('${opportunity.id}', '${this.escapeHtml(opportunity.title || 'Unknown')}', '${this.escapeHtml(opportunity.company || 'Unknown')}')">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        calculateMatchScore(opportunity) {
+            // Enhanced match score calculation
+            let score = 70; // Base score
+            
+            // Get student profile data
+            const studentProfile = window.studentProfile?.formData || {};
+            
+            // Match based on skills
+            if (studentProfile.technicalSkills && studentProfile.technicalSkills.length > 0) {
+                const studentSkills = studentProfile.technicalSkills.map(skill => skill.toLowerCase());
+                if (opportunity.requirements) {
+                    const reqSkills = opportunity.requirements.toLowerCase();
+                    const matchedSkills = studentSkills.filter(skill => reqSkills.includes(skill));
+                    score += (matchedSkills.length / studentSkills.length) * 20;
+                }
+            }
+            
+            // Match based on domain interest
+            if (studentProfile.interestedDomains && opportunity.title) {
+                const domain = studentProfile.interestedDomains.toLowerCase();
+                const title = opportunity.title.toLowerCase();
+                if (title.includes(domain)) {
+                    score += 15;
+                }
+            }
+            
+            // Match based on location preference
+            if (studentProfile.preferredLocation && opportunity.location) {
+                const preferredLocations = studentProfile.preferredLocation.toLowerCase().split(',');
+                const opportunityLocation = opportunity.location.toLowerCase();
+                if (preferredLocations.some(loc => opportunityLocation.includes(loc.trim()))) {
+                    score += 10;
+                }
+            }
+            
+            return Math.min(Math.round(score), 95); // Cap at 95%
+        }
+
+        updateOpportunitiesCount() {
+            const internships = this.opportunities.filter(opp => 
+                opp.type === 'internship' || 
+                (opp.title && opp.title.toLowerCase().includes('intern'))
+            );
+            
+            const jobs = this.opportunities.filter(opp => 
+                opp.type === 'job' || 
+                !(opp.type === 'internship' || (opp.title && opp.title.toLowerCase().includes('intern')))
+            );
+
+            // Update tab badges
+            const internshipTab = document.querySelector('.opportunity-tab:nth-child(1)');
+            const jobsTab = document.querySelector('.opportunity-tab:nth-child(2)');
+            
+            if (internshipTab) {
+                internshipTab.innerHTML = `Internships ${internships.length > 0 ? `<span class="badge bg-primary ms-1">${internships.length}</span>` : ''}`;
+            }
+            if (jobsTab) {
+                jobsTab.innerHTML = `Jobs ${jobs.length > 0 ? `<span class="badge bg-primary ms-1">${jobs.length}</span>` : ''}`;
+            }
+        }
+
+        getNoOpportunitiesHTML(type) {
+            return `
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No ${type} available</h4>
+                    <p class="text-muted">Check back later for new opportunities</p>
+                    <button class="btn btn-primary mt-3" onclick="window.opportunitiesManager.loadOpportunities()">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+            `;
+        }
+
+        showNoOpportunitiesMessage() {
+            const containers = [
+                document.querySelector('#internships-tab .opportunity-grid'),
+                document.querySelector('#jobs-tab .opportunity-grid')
+            ];
+            
+            containers.forEach(container => {
+                if (container) {
+                    container.innerHTML = this.getNoOpportunitiesHTML('opportunities');
+                }
+            });
+        }
+
+        showErrorMessage(message) {
+            const containers = [
+                document.querySelector('#internships-tab .opportunity-grid'),
+                document.querySelector('#jobs-tab .opportunity-grid')
+            ];
+            
+            containers.forEach(container => {
+                if (container) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                            <h4 class="text-warning">Unable to load opportunities</h4>
+                            <p class="text-muted">${message}</p>
+                            <button class="btn btn-warning mt-3" onclick="window.opportunitiesManager.loadOpportunities()">
+                                <i class="fas fa-refresh"></i> Try Again
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        formatDate(dateString) {
+            if (!dateString) return 'Recently';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    }
+
+    // Global functions for opportunity actions
+    async function applyForOpportunity(opportunityId, position, company) {
+        try {
+            console.log(`Applying for opportunity: ${opportunityId}, ${position}, ${company}`);
+            
+            const studentProfile = window.studentProfile?.collectFormData?.() || {
+                fullName: document.getElementById('fullName')?.value || 'John Doe',
+                email: document.getElementById('email')?.value || 'john.doe@example.com'
+            };
+
+            const result = await window.firebaseApp.applyForOpportunity(opportunityId, studentProfile);
+            
+            if (result.success) {
+                showToast(`Application submitted for ${position} at ${company}`, 'success');
+                
+                // Update the button state
+                const button = event.target;
+                button.textContent = 'Applied ✓';
+                button.disabled = true;
+                button.style.background = '#10b981';
+                
+                // Update in local state
+                const opportunitiesManager = window.opportunitiesManager;
+                const opportunity = opportunitiesManager.opportunities.find(opp => opp.id === opportunityId);
+                if (opportunity) {
+                    opportunity.applied = true;
+                }
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error('Error applying for opportunity:', error);
+            showToast('Error submitting application: ' + error.message, 'error');
+        }
+    }
+
+    function saveOpportunity(opportunityId, position, company) {
+        const button = event.target;
+        const icon = button.querySelector('i');
+        
+        // Toggle saved state
+        const isSaved = icon.classList.contains('fas');
+        
+        if (!isSaved) {
+            // Save the opportunity
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            button.style.borderColor = 'var(--primary)';
+            button.style.color = 'var(--primary)';
+            showToast(`${position} at ${company} saved to your favorites`, 'success');
+            
+            // Save to localStorage
+            const savedOpportunities = JSON.parse(localStorage.getItem('savedOpportunities') || '[]');
+            if (!savedOpportunities.includes(opportunityId)) {
+                savedOpportunities.push(opportunityId);
+                localStorage.setItem('savedOpportunities', JSON.stringify(savedOpportunities));
+            }
+        } else {
+            // Unsave the opportunity
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            button.style.borderColor = 'var(--secondary)';
+            button.style.color = 'var(--secondary)';
+            showToast(`${position} at ${company} removed from favorites`, 'info');
+            
+            // Remove from localStorage
+            const savedOpportunities = JSON.parse(localStorage.getItem('savedOpportunities') || '[]');
+            const index = savedOpportunities.indexOf(opportunityId);
+            if (index > -1) {
+                savedOpportunities.splice(index, 1);
+                localStorage.setItem('savedOpportunities', JSON.stringify(savedOpportunities));
+            }
+        }
+    }
+
+    // Initialize opportunities manager
+    function initializeOpportunitiesManager() {
+        if (!window.opportunitiesManager) {
+            window.opportunitiesManager = new OpportunitiesManager();
+        } else {
+            window.opportunitiesManager.init();
+        }
+    }
+
+    // Auto-initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing opportunities manager...');
+        
+        // Initialize opportunities manager
+        setTimeout(() => {
+            initializeOpportunitiesManager();
+        }, 1000);
+        
+        // Load opportunities when opportunities tab is clicked
+        document.querySelector('[onclick="switchSection(\'opportunities\')"]').addEventListener('click', function() {
+            setTimeout(() => {
+                initializeOpportunitiesManager();
+            }, 100);
+        });
+    });
+
+    // Make functions globally available
+    window.initializeOpportunitiesManager = initializeOpportunitiesManager;
+    window.applyForOpportunity = applyForOpportunity;
+    window.saveOpportunity = saveOpportunity;
+</script>
+
+    <script>
+        // Firebase integration functions
+        async function saveProfileToFirebase(profileData) {
+            try {
+                const result = await window.firebaseApp.saveProfile(profileData);
+                
+                if (result.success) {
+                    showToast('Profile saved successfully to Firebase!', 'success');
+                    return true;
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Error saving to Firebase:', error);
+                showToast('Error saving profile: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function loadProfileFromFirebase(userId) {
+            try {
+                const result = await window.firebaseApp.loadProfile(userId);
+                
+                if (result.success) {
+                    return result.data;
+                } else {
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                return null;
+            }
+        }
+
+        // Section switching functionality
+        function switchSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        // Tab switching functionality for Internships & Jobs
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.opportunity-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab and set active
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        
+
+    
+        // Initialize readiness chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('readinessChart').getContext('2d');
+            const readinessChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [78, 22],
+                        backgroundColor: ['#2563eb', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+
+            // ADD THIS LINE:
+    initializeOpportunitiesManager(); // This will load opportunities automatically
+
+            // Initialize the enhanced profile builder
+            initializeProfileBuilder();
+            
+            // Initialize career recommendation functionality
+            initializeCareerRecommendation();
+        });
+
+        // Career Recommendation Functionality
+        function initializeCareerRecommendation() {
+            const recommendationBtn = document.getElementById('getRecommendationBtn');
+            const recommendationContent = document.getElementById('recommendationContent');
+            
+            recommendationBtn.addEventListener('click', function() {
+                // Show loading state
+                recommendationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Recommendations...';
+                recommendationBtn.disabled = true;
+                
+                // Simulate API call to generate recommendations
+                setTimeout(() => {
+                    // Show recommendations
+                    recommendationContent.classList.add('active');
+                    
+                    // Reset button
+                    recommendationBtn.innerHTML = '<i class="fas fa-magic"></i> Get Your Personalized Career Recommendation';
+                    recommendationBtn.disabled = false;
+                    
+                    // Show success message
+                    showToast('Career recommendations generated successfully!', 'success');
+                }, 2000);
+            });
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('.toast-icon i');
+            const title = toast.querySelector('.toast-title');
+            const messageEl = toast.querySelector('.toast-message');
+           
+            // Set content based on type
+            const config = {
+                success: { icon: 'fa-check-circle', title: 'Success' },
+                error: { icon: 'fa-exclamation-circle', title: 'Error' },
+                warning: { icon: 'fa-exclamation-triangle', title: 'Warning' },
+                info: { icon: 'fa-info-circle', title: 'Info' }
+            }[type];
+           
+            icon.className = `fas ${config.icon}`;
+            title.textContent = config.title;
+            messageEl.textContent = message;
+           
+            // Set toast class
+            toast.className = `toast ${type}`;
+           
+            // Show toast
+            toast.classList.add('show');
+           
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+           
+            // Close button
+            toast.querySelector('.toast-close').onclick = () => {
+                toast.classList.remove('show');
+            };
+        }
+
+        // Enhanced Profile Builder JavaScript
+        function initializeProfileBuilder() {
+            class StudentProfile {
+                constructor() {
+                    this.technicalSkills = [];
+                    this.softSkills = [];
+                    this.formData = {};
+                    this.init();
+                }
+
+                init() {
+                    this.cacheDOM();
+                    this.bindEvents();
+                    this.populateFormFields();
+                    this.loadFromLocalStorage();
+                    this.updateProgress();
+                }
+
+                cacheDOM() {
+                    // Form elements
+                    this.form = document.getElementById('studentProfileForm');
+                    this.progressFill = document.getElementById('progressFill');
+                    this.progressText = document.getElementById('progressText');
+                   
+                    // Personal Information
+                    this.fullName = document.getElementById('fullName');
+                    this.email = document.getElementById('email');
+                   
+                    // Academic Information
+                    this.degree = document.getElementById('degree');
+                    this.institution = document.getElementById('institution');
+                    this.branch = document.getElementById('branch');
+                    this.cgpa = document.getElementById('cgpa');
+                    this.graduationYear = document.getElementById('graduationYear');
+                    this.semester = document.getElementById('semester');
+                   
+                    // Skills
+                    this.technicalSkillsInput = document.getElementById('technicalSkills');
+                    this.technicalSkillsContainer = document.getElementById('technicalSkillsContainer');
+                    this.softSkillsInput = document.getElementById('softSkills');
+                    this.softSkillsContainer = document.getElementById('softSkillsContainer');
+                    this.techSkillsCount = document.getElementById('techSkillsCount');
+                    this.softSkillsCount = document.getElementById('softSkillsCount');
+                   
+                    // Career Preferences
+                    this.interestedDomains = document.getElementById('interestedDomains');
+                    this.careerGoals = document.getElementById('careerGoals');
+                    this.preferredLocation = document.getElementById('preferredLocation');
+                   
+                    // Resume
+                    this.resumeUpload = document.getElementById('resumeUpload');
+                    this.resumeFile = document.getElementById('resumeFile');
+                    this.filePreview = document.getElementById('filePreview');
+                    this.resumeFileName = document.getElementById('resumeFileName');
+                    this.resumeFileSize = document.getElementById('resumeFileSize');
+                    this.removeResume = document.getElementById('removeResume');
+                    this.portfolioLink = document.getElementById('portfolioLink');
+                   
+                    // Actions
+                    this.saveDraftBtn = document.getElementById('saveDraftBtn');
+                    this.submitBtn = document.getElementById('submitBtn');
+                   
+                    // All required fields
+                    this.requiredFields = [
+                        this.fullName, this.email, this.degree, this.institution,
+                        this.branch, this.cgpa, this.graduationYear,
+                        this.interestedDomains, this.careerGoals
+                    ];
+                }
+
+                bindEvents() {
+                    // Form submission
+                    this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                   
+                    // Save draft
+                    this.saveDraftBtn.addEventListener('click', () => this.saveDraft());
+                   
+                    // Skills management
+                    document.querySelectorAll('.skill-add-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => this.handleAddSkill(e));
+                    });
+                   
+                    this.technicalSkillsInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.addSkill(this.technicalSkillsInput.value, 'technical');
+                            this.technicalSkillsInput.value = '';
+                        }
+                    });
+                   
+                    this.softSkillsInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.addSkill(this.softSkillsInput.value, 'soft');
+                            this.softSkillsInput.value = '';
+                        }
+                    });
+                   
+                    // Remove skills
+                    document.addEventListener('click', (e) => {
+                        if (e.target.closest('.skill-tag-remove')) {
+                            this.handleRemoveSkill(e);
+                        }
+                    });
+                   
+                    // Skill suggestions
+                    document.querySelectorAll('.suggestion-tag').forEach(tag => {
+                        tag.addEventListener('click', (e) => {
+                            const skill = e.target.getAttribute('data-skill');
+                            const type = e.target.closest('.skill-category').querySelector('.skill-input').id === 'technicalSkills' ? 'technical' : 'soft';
+                            this.addSkill(skill, type);
+                        });
+                    });
+                   
+                    // File upload
+                    this.resumeUpload.addEventListener('click', () => this.resumeFile.click());
+                    this.resumeUpload.addEventListener('dragover', (e) => this.handleDragOver(e));
+                    this.resumeUpload.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                    this.resumeUpload.addEventListener('drop', (e) => this.handleFileDrop(e));
+                    this.resumeFile.addEventListener('change', () => this.handleFileSelect());
+                    this.removeResume.addEventListener('click', () => this.removeFile());
+                   
+                    // Real-time validation
+                    this.requiredFields.forEach(field => {
+                        field.addEventListener('blur', () => this.validateField(field));
+                        field.addEventListener('input', () => {
+                            this.updateProgress();
+                            this.clearFieldError(field);
+                        });
+                    });
+                   
+                    // Auto-save on changes
+                    this.setupAutoSave();
+                }
+
+                populateFormFields() {
+                    this.populateGraduationYears();
+                    this.setCurrentSemester();
+                }
+
+                populateGraduationYears() {
+                    const currentYear = new Date().getFullYear();
+                    for (let year = currentYear; year <= currentYear + 5; year++) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        this.graduationYear.appendChild(option);
+                    }
+                }
+
+                setCurrentSemester() {
+                    const currentMonth = new Date().getMonth();
+                    // Assuming odd semester: Jul-Dec, even semester: Jan-Jun
+                    const isOddSemester = currentMonth >= 6; // July to December
+                    const academicYear = new Date().getFullYear();
+                   
+                    // This is a simplified calculation - adjust based on your academic calendar
+                    let defaultSemester = 1;
+                    this.semester.value = defaultSemester;
+                }
+
+                handleAddSkill(e) {
+                    const type = e.target.closest('.skill-add-btn').dataset.type;
+                    const input = type === 'technical' ? this.technicalSkillsInput : this.softSkillsInput;
+                    const skill = input.value.trim();
+                   
+                    if (skill) {
+                        this.addSkill(skill, type);
+                        input.value = '';
+                        input.focus();
+                    }
+                }
+
+                addSkill(skill, type) {
+                    if (!skill.trim()) return;
+                   
+                    // Check if skill already exists
+                    const skills = type === 'technical' ? this.technicalSkills : this.softSkills;
+                    if (skills.includes(skill)) {
+                        showToast('Skill already added', 'warning');
+                        return;
+                    }
+                   
+                    // Add to array
+                    skills.push(skill);
+                   
+                    // Create skill tag
+                    const skillTag = document.createElement('div');
+                    skillTag.className = 'skill-tag';
+                    skillTag.innerHTML = `
+                        ${skill}
+                        <button type="button" class="skill-tag-remove" data-skill="${skill}" data-type="${type}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                   
+                    // Add to container
+                    const container = type === 'technical' ? this.technicalSkillsContainer : this.softSkillsContainer;
+                    container.appendChild(skillTag);
+                   
+                    // Update count
+                    this.updateSkillCounts();
+                   
+                    // Update progress
+                    this.updateProgress();
+                   
+                    showToast(`Added ${type} skill: ${skill}`, 'success');
+                }
+
+                handleRemoveSkill(e) {
+                    const removeBtn = e.target.closest('.skill-tag-remove');
+                    const skill = removeBtn.getAttribute('data-skill');
+                    const type = removeBtn.getAttribute('data-type');
+                   
+                    this.removeSkill(skill, type);
+                    removeBtn.closest('.skill-tag').remove();
+                    this.updateSkillCounts();
+                    this.updateProgress();
+                }
+
+                removeSkill(skill, type) {
+                    if (type === 'technical') {
+                        this.technicalSkills = this.technicalSkills.filter(s => s !== skill);
+                    } else {
+                        this.softSkills = this.softSkills.filter(s => s !== skill);
+                    }
+                }
+
+                updateSkillCounts() {
+                    this.techSkillsCount.textContent = this.technicalSkills.length;
+                    this.softSkillsCount.textContent = this.softSkills.length;
+                }
+
+                handleDragOver(e) {
+                    e.preventDefault();
+                    this.resumeUpload.classList.add('dragover');
+                }
+
+                handleDragLeave(e) {
+                    e.preventDefault();
+                    this.resumeUpload.classList.remove('dragover');
+                }
+
+                handleFileDrop(e) {
+                    e.preventDefault();
+                    this.resumeUpload.classList.remove('dragover');
+                   
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.resumeFile.files = files;
+                        this.handleFileSelect();
+                    }
+                }
+
+                handleFileSelect() {
+                    const file = this.resumeFile.files[0];
+                    if (file) {
+                        if (this.validateFile(file)) {
+                            this.showFilePreview(file);
+                            showToast('Resume uploaded successfully', 'success');
+                        } else {
+                            this.resumeFile.value = '';
+                            this.hideFilePreview();
+                            showToast('Please upload a PDF or DOCX file under 5MB', 'error');
+                        }
+                    }
+                    this.updateProgress();
+                }
+
+                validateFile(file) {
+                    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                   
+                    return validTypes.includes(file.type) && file.size <= maxSize;
+                }
+
+                showFilePreview(file) {
+                    this.resumeFileName.textContent = file.name;
+                    this.resumeFileSize.textContent = this.formatFileSize(file.size);
+                    this.filePreview.classList.add('show');
+                }
+
+                hideFilePreview() {
+                    this.filePreview.classList.remove('show');
+                    this.resumeFileName.textContent = 'No file chosen';
+                    this.resumeFileSize.textContent = '';
+                }
+
+                removeFile() {
+                    this.resumeFile.value = '';
+                    this.hideFilePreview();
+                    this.updateProgress();
+                }
+
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                }
+
+                validateField(field) {
+                    const value = field.value.trim();
+                    const feedback = field.parentElement.querySelector('.form-feedback');
+                   
+                    if (field.hasAttribute('required') && !value) {
+                        this.showFieldError(field, 'This field is required');
+                        return false;
+                    }
+                   
+                    if (field.type === 'email' && value && !this.isValidEmail(value)) {
+                        this.showFieldError(field, 'Please enter a valid email address');
+                        return false;
+                    }
+                   
+                    if (field.id === 'cgpa' && value) {
+                        const cgpa = parseFloat(value);
+                        if (cgpa < 0 || cgpa > 10) {
+                            this.showFieldError(field, 'CGPA must be between 0 and 10');
+                            return false;
+                        }
+                    }
+                   
+                    this.clearFieldError(field);
+                    return true;
+                }
+
+                isValidEmail(email) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                }
+
+                showFieldError(field, message) {
+                    field.style.borderColor = 'var(--danger)';
+                    const feedback = field.parentElement.querySelector('.form-feedback');
+                    feedback.textContent = message;
+                    feedback.className = 'form-feedback error';
+                }
+
+                clearFieldError(field) {
+                    field.style.borderColor = '';
+                    const feedback = field.parentElement.querySelector('.form-feedback');
+                    feedback.textContent = '';
+                    feedback.className = 'form-feedback';
+                }
+
+                updateProgress() {
+                    let completed = 0;
+                    const total = this.requiredFields.length + 3; // +3 for skills and resume
+                   
+                    // Check required fields
+                    this.requiredFields.forEach(field => {
+                        if (field.value.trim()) completed++;
+                    });
+                   
+                    // Check skills (count as completed if at least one skill is added)
+                    if (this.technicalSkills.length > 0) completed++;
+                    if (this.softSkills.length > 0) completed++;
+                   
+                    // Check resume
+                    if (this.resumeFile.files.length > 0) completed++;
+                   
+                    const percentage = Math.round((completed / total) * 100);
+                    this.progressFill.style.width = `${percentage}%`;
+                    this.progressText.textContent = `${percentage}% Complete`;
+                }
+
+                setupAutoSave() {
+                    let timeout;
+                    const autoSaveFields = [
+                        this.fullName, this.email, this.degree, this.institution,
+                        this.branch, this.cgpa, this.graduationYear, this.semester,
+                        this.interestedDomains, this.careerGoals, this.preferredLocation,
+                        this.portfolioLink
+                    ];
+
+                    autoSaveFields.forEach(field => {
+                        field.addEventListener('input', () => {
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => {
+                                this.saveDraft();
+                            }, 2000);
+                        });
+                    });
+                }
+
+                saveDraft() {
+                    const formData = this.collectFormData();
+                    localStorage.setItem('studentProfileDraft', JSON.stringify(formData));
+                    showToast('Profile saved as draft', 'success');
+                }
+
+                loadFromLocalStorage() {
+                    const savedData = localStorage.getItem('studentProfileDraft');
+                    if (savedData) {
+                        try {
+                            const formData = JSON.parse(savedData);
+                            this.populateFormFromData(formData);
+                            showToast('Draft profile loaded', 'info');
+                        } catch (error) {
+                            console.error('Error loading draft:', error);
+                        }
+                    }
+                }
+
+                async loadFromFirebase() {
+                    const userId = this.email.value || 'default-user';
+                    const savedData = await loadProfileFromFirebase(userId);
+                    
+                    if (savedData) {
+                        this.populateFormFromData(savedData);
+                        showToast('Profile loaded from cloud', 'info');
+                    } else {
+                        // Fallback to local storage
+                        this.loadFromLocalStorage();
+                    }
+                }
+
+                populateFormFromData(formData) {
+                    // Personal Information
+                    this.fullName.value = formData.fullName || '';
+                    this.email.value = formData.email || '';
+                   
+                    // Academic Information
+                    this.degree.value = formData.degree || '';
+                    this.institution.value = formData.institution || '';
+                    this.branch.value = formData.branch || '';
+                    this.cgpa.value = formData.cgpa || '';
+                    this.graduationYear.value = formData.graduationYear || '';
+                    this.semester.value = formData.semester || '';
+                   
+                    // Skills
+                    if (formData.technicalSkills) {
+                        formData.technicalSkills.forEach(skill => this.addSkill(skill, 'technical'));
+                    }
+                    if (formData.softSkills) {
+                        formData.softSkills.forEach(skill => this.addSkill(skill, 'soft'));
+                    }
+                   
+                    // Career Preferences
+                    this.interestedDomains.value = formData.interestedDomains || '';
+                    this.careerGoals.value = formData.careerGoals || '';
+                    this.preferredLocation.value = formData.preferredLocation || '';
+                    this.portfolioLink.value = formData.portfolioLink || '';
+                   
+                    this.updateProgress();
+                }
+
+                collectFormData() {
+                    return {
+                        // Personal Information
+                        fullName: this.fullName.value,
+                        email: this.email.value,
+                       
+                        // Academic Information
+                        degree: this.degree.value,
+                        institution: this.institution.value,
+                        branch: this.branch.value,
+                        cgpa: this.cgpa.value,
+                        graduationYear: this.graduationYear.value,
+                        semester: this.semester.value,
+                       
+                        // Skills
+                        technicalSkills: this.technicalSkills,
+                        softSkills: this.softSkills,
+                       
+                        // Career Preferences
+                        interestedDomains: this.interestedDomains.value,
+                        careerGoals: this.careerGoals.value,
+                        preferredLocation: this.preferredLocation.value,
+                        portfolioLink: this.portfolioLink.value,
+                       
+                        // Resume
+                        resume: this.resumeFile.files[0] ? this.resumeFile.files[0].name : null,
+                       
+                        // Metadata
+                        lastUpdated: new Date().toISOString(),
+                        profileCompletion: Math.round((this.progressFill.style.width || '0%').replace('%', ''))
+                    };
+                }
+
+                async handleSubmit(e) {
+                    e.preventDefault();
+                   
+                    // Validate all fields
+                    let isValid = true;
+                    this.requiredFields.forEach(field => {
+                        if (!this.validateField(field)) {
+                            isValid = false;
+                        }
+                    });
+                   
+                    // Validate resume
+                    if (this.resumeFile.files.length === 0) {
+                        showToast('Please upload your resume', 'error');
+                        isValid = false;
+                    }
+                   
+                    // Validate skills
+                    if (this.technicalSkills.length === 0) {
+                        showToast('Please add at least one technical skill', 'error');
+                        isValid = false;
+                    }
+                   
+                    if (!isValid) {
+                        showToast('Please fix the errors before submitting', 'error');
+                        return;
+                    }
+                   
+                    // Show loading state
+                    this.setLoadingState(true);
+                   
+                    try {
+                        // Collect form data
+                        const formData = this.collectFormData();
+                       
+                        // Save to Firebase
+                        const success = await saveProfileToFirebase(formData);
+                       
+                        if (success) {
+                            showToast('Profile completed successfully! Generating recommendations...', 'success');
+                           
+                            // Clear draft and redirect after delay
+                            setTimeout(() => {
+                                localStorage.removeItem('studentProfileDraft');
+                                // You can redirect to recommendations page here
+                            }, 2000);
+                        }
+                       
+                    } catch (error) {
+                        showToast('Error submitting profile: ' + error.message, 'error');
+                    } finally {
+                        this.setLoadingState(false);
+                    }
+                }
+
+                setLoadingState(loading) {
+                    if (loading) {
+                        this.submitBtn.disabled = true;
+                        this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    } else {
+                        this.submitBtn.disabled = false;
+                        this.submitBtn.innerHTML = '<i class="fas fa-rocket"></i> Complete Profile & Get Recommendations';
+                    }
+                }
+            }
+
+            // Initialize the profile builder
+            const studentProfile = new StudentProfile();
+            window.studentProfile = studentProfile;
+
+            // Load data from Firebase when profile section is active
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (this.getAttribute('onclick').includes('profile')) {
+                        setTimeout(() => {
+                            studentProfile.loadFromFirebase();
+                        }, 500);
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
